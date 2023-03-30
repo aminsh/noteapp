@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NoteModule } from './note/note.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { NoteModule } from './note/note.module';
       inject: [ ConfigService ],
       useFactory: (configService: ConfigService) => ({ uri: configService.get('MONGO_URI') })
     }),
-    NoteModule
+    NoteModule,
+    UserModule
   ],
   controllers: [ AppController ],
   providers: [ AppService ],
