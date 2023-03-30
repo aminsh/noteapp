@@ -6,7 +6,7 @@ import { RegisterDTO } from '../dto/register.dto';
 import { Identity } from '../../shared/type';
 import { EqualsCaseInsensitive, hash } from '../../shared/utils';
 import { USER_MESSAGE } from '../user.constants';
-import { UpdateUserDTO } from '../dto/update-user-d-t.o';
+import { UpdateUserDTO } from '../dto/update-user.dto';
 
 @Injectable()
 export class UserService {

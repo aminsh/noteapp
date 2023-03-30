@@ -1,11 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-export interface Identity {
-  id: string;
-}
-
 @ObjectType()
-export class IdentityResponse {
+export class UserView {
   @Field()
   id: string;
+
+  @Field()
+  name: string;
+
+  @Field()
+  email: string;
 }
