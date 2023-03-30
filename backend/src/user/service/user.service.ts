@@ -1,19 +1,20 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { User } from '../shema/user';
 import { RegisterDTO } from '../dto/register.dto';
-import { Indentity } from '../../shared/type';
+import { Identity } from '../../shared/type';
 import { EqualsCaseInsensitive, hash } from '../../shared/utils';
 import { USER_MESSAGE } from '../user.constants';
+import { UpdateUserDTO } from '../dto/update-user-d-t.o';
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async create(dto: RegisterDTO): Promise<Indentity> {
+  async create(dto: RegisterDTO): Promise<Identity> {
     const isDuplicated = await this.userModel
-      .findOne({ email: EqualsCaseInsensitive(dto.email) })
+      .findOne({ email: EqualsCaseInsensitive(dto.email) }, { _id: true })
       .exec();
 
     if (isDuplicated)
@@ -26,5 +27,15 @@ export class UserService {
 
     await entity.save();
     return { id: entity._id.toString() };
+  }
+
+  async update(id: string, dto: UpdateUserDTO): Promise<void> {
+    const entity = await this.userModel.findOne({ _id: id }).exec();
+
+    if (!entity)
+      throw new NotFoundException();
+
+    entity.name = dto.name;
+    await entity.save();
   }
 }

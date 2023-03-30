@@ -1,3 +1,3 @@
-export interface Indentity {
+export interface Identity {
   id: string;
 }

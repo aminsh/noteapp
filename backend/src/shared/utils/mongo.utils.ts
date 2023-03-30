@@ -1,1 +1,1 @@
-export const EqualsCaseInsensitive = (value: string) => `/^${ value }$/i`;
+export const EqualsCaseInsensitive = (value: string) => new RegExp(["^", value, "$"].join(""), "i")
