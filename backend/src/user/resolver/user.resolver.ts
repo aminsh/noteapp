@@ -8,6 +8,10 @@ import { IdentityResponse } from '../../shared/type';
 import { UserService } from '../service/user.service';
 import { UpdateUserDTO } from '../dto/update-user.dto';
 import { VoidResolver } from 'graphql-scalars';
+import { TokenResponse } from '../dto/token-response';
+import { LoginDTO } from '../dto/login.dto';
+import { UseGuards } from '@nestjs/common';
+import { JwtGqlAuthenticationGuard } from 'dx-nest-core/auth';
 
 @Resolver(() => UserView)
 export class UserResolver {
@@ -16,6 +20,7 @@ export class UserResolver {
     private userService: UserService
   ) {}
 
+  @UseGuards(JwtGqlAuthenticationGuard)
   @Query(() => [ UserView ])
   async getUsers(): Promise<UserView[]> {
     const users = await this.userModel.find().exec();
@@ -29,6 +34,11 @@ export class UserResolver {
   @Mutation(() => IdentityResponse)
   register(@Args('userRegister') dto: RegisterDTO): Promise<IdentityResponse> {
     return this.userService.create(dto);
+  }
+
+  @Mutation(() => TokenResponse)
+  login(@Args('userLogin') dto: LoginDTO): Promise<TokenResponse> {
+    return this.userService.login(dto);
   }
 
   @Mutation(() => VoidResolver, { nullable: true })

@@ -12,17 +12,29 @@ type IdentityResponse {
   id: String!
 }
 
+type TokenResponse {
+  access_token: String!
+  expires_in: String!
+  token_type: String!
+}
+
 type Query {
   getUsers: [UserView!]!
 }
 
 type Mutation {
   register(userRegister: RegisterDTO!): IdentityResponse!
+  login(userLogin: LoginDTO!): TokenResponse!
   update(userId: String!, updateUser: UpdateUserDTO!): Void
 }
 
 input RegisterDTO {
   name: String!
+  email: String!
+  password: String!
+}
+
+input LoginDTO {
   email: String!
   password: String!
 }

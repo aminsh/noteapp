@@ -4,12 +4,21 @@ import { User, UserSchema } from './shema/user';
 import { UserService } from './service/user.service';
 import { UserController } from './user.controller';
 import { UserResolver } from './resolver/user.resolver';
+import { AuthModule } from 'dx-nest-core/auth';
+import { AuthUserSerializationServiceImp } from './service/auth-user-serialization.service';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema }
-    ])
+    ]),
+    AuthModule.register({
+      jwt: {
+        secret: 'P@ssw0rd',
+        expiresIn: '72h'
+      },
+      userSerializationService: AuthUserSerializationServiceImp
+    }),
   ],
   providers: [
     UserService,
