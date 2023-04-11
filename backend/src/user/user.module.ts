@@ -6,6 +6,7 @@ import { UserController } from './user.controller';
 import { UserResolver } from './resolver/user.resolver';
 import { AuthModule } from 'dx-nest-core/auth';
 import { AuthUserSerializationServiceImp } from './service/auth-user-serialization.service';
+import { UserRepository } from './repository/user.repository';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AuthUserSerializationServiceImp } from './service/auth-user-serializati
     }),
   ],
   providers: [
+    UserRepository,
     UserService,
     UserResolver
   ],

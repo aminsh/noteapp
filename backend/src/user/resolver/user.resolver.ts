@@ -32,8 +32,9 @@ export class UserResolver {
   }
 
   @Mutation(() => IdentityResponse)
-  register(@Args('userRegister') dto: RegisterDTO): Promise<IdentityResponse> {
-    return this.userService.create(dto);
+  async register(@Args('userRegister') dto: RegisterDTO): Promise<IdentityResponse> {
+    const result = await this.userService.create(dto);
+    return { id: result['_id'] }
   }
 
   @Mutation(() => TokenResponse)

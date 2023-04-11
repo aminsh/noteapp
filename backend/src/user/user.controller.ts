@@ -9,8 +9,9 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Post()
-  create(@Body() dto: RegisterDTO): Promise<Identity> {
-    return this.userService.create(dto);
+  async create(@Body() dto: RegisterDTO): Promise<Identity> {
+    const result = await this.userService.create(dto);
+    return { id: result['_id'] };
   }
 
   @Put(':id')
