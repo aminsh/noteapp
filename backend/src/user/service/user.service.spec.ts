@@ -59,7 +59,7 @@ describe('User Service', () => {
 
     it('should be succeed', async () => {
       const user = new User();
-      user['_id'] = 'USER-ID'
+      user._id = 'USER-ID'
       user.email = 'USER@email.com';
       user.name = 'User Name';
       user.password = '123456';
@@ -70,7 +70,7 @@ describe('User Service', () => {
 
       jest.spyOn(userRepository, 'create')
         .mockImplementation(async (entity: User) => {
-          entity['_id'] = user['_id'];
+          entity._id = user['_id'];
           return entity;
         });
 
@@ -81,15 +81,15 @@ describe('User Service', () => {
       });
 
       expect(savedEntity.email).toBe(user.email.toLowerCase());
-      expect(savedEntity['_id']).toBe(user['_id']);
+      expect(savedEntity._id).toBe(user._id);
       expect(savedEntity.password).toBe(hash(user.password));
     });
   })
 
   describe('Update Method', () => {
     it('should throw NotFoundException because entity is not exist', async () => {
+      const id = 'USER-ID';
       const user = new User();
-      user['_id'] = 'USER-ID'
       user.name = 'User Name';
 
       jest
@@ -97,7 +97,7 @@ describe('User Service', () => {
         .mockResolvedValue(null);
 
       try {
-        await userService.update(user['_id'], { name: user.name });
+        await userService.update(id, { name: user.name });
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
       }

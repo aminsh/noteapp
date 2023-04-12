@@ -1,9 +1,8 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Entity } from '../../shared/type';
 
 @Schema()
-export class User {
-  readonly _id: string;
-
+export class User extends Entity {
   @Prop()
   name: string;
 

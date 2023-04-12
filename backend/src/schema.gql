@@ -2,14 +2,14 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type IdentityResponse {
+  id: String!
+}
+
 type UserView {
   id: String!
   name: String!
   email: String!
-}
-
-type IdentityResponse {
-  id: String!
 }
 
 type TokenResponse {
