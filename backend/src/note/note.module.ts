@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Note, NoteSchema } from './schema/note';
 import { NoteService } from './service/note.service';
-import { NoteController } from './controller/note.controller';
+import { NoteRepository } from './repository/note.repository';
+import { NoteResolver } from './resolver/note.resolver';
 
 @Module({
   imports: [
@@ -11,10 +12,9 @@ import { NoteController } from './controller/note.controller';
     ])
   ],
   providers: [
-    NoteService
-  ],
-  controllers: [
-    NoteController
+    NoteRepository,
+    NoteService,
+    NoteResolver
   ]
 })
 export class NoteModule {

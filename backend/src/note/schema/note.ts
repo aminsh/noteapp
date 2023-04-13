@@ -1,10 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-
-export type NoteDocument = HydratedDocument<Note>;
+import { Entity } from '../../shared/type';
 
 @Schema()
-export class Note {
+export class Note extends Entity {
   @Prop()
   title: string;
 

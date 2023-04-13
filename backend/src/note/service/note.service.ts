@@ -1,25 +1,39 @@
-import { InjectModel } from '@nestjs/mongoose';
 import { Note } from '../schema/note';
-import { Model } from 'mongoose';
 import { NoteDto } from '../dto/note.dto';
-import { Injectable } from '@nestjs/common';
-import { NoteView } from '../dto/note.view';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { NoteRepository } from '../repository/note.repository';
 
 @Injectable()
 export class NoteService {
-  constructor(@InjectModel(Note.name) private noteModel: Model<Note>) {}
+  constructor(private noteRepository: NoteRepository) {}
 
   async create(dto: NoteDto): Promise<Note> {
-    const entity = new this.noteModel(dto);
-    return entity.save();
+    const entity = new Note();
+    entity.title = dto.title;
+    entity.content = dto.content;
+
+    return this.noteRepository.create(entity);
   }
 
-  async find(): Promise<NoteView[]> {
-    const entities = await this.noteModel.find().exec();
-    return entities.map(e => ({
-      id: e._id.toString(),
-      title: e.title,
-      content: e.content
-    }))
+
+  async update(_id: string, dto: NoteDto): Promise<void> {
+    const entity = await this.noteRepository.findOne({ _id });
+
+    if (!entity)
+      throw new NotFoundException();
+
+    entity.title = dto.title;
+    entity.content = dto.content;
+
+    await this.noteRepository.update(entity);
+  }
+
+  async remove(_id: string): Promise<void> {
+    const entity = await this.noteRepository.findOne({ _id });
+
+    if (!entity)
+      throw new NotFoundException();
+
+    await this.noteRepository.remove(entity);
   }
 }
