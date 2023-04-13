@@ -4,6 +4,7 @@ import { Note, NoteSchema } from './schema/note';
 import { NoteService } from './service/note.service';
 import { NoteRepository } from './repository/note.repository';
 import { NoteResolver } from './resolver/note.resolver';
+import { NoteController } from './note.controller';
 
 @Module({
   imports: [
@@ -15,6 +16,9 @@ import { NoteResolver } from './resolver/note.resolver';
     NoteRepository,
     NoteService,
     NoteResolver
+  ],
+  controllers: [
+    NoteController
   ]
 })
 export class NoteModule {

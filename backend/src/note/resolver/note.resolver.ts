@@ -6,7 +6,10 @@ import { NoteView } from '../dto/note.view';
 import { NoteService } from '../service/note.service';
 import { NoteDto } from '../dto/note.dto';
 import { VoidResolver } from 'graphql-scalars';
+import { UseGuards } from '@nestjs/common';
+import { JwtGqlAuthenticationGuard } from 'dx-nest-core/auth';
 
+@UseGuards(JwtGqlAuthenticationGuard)
 @Resolver(() => NoteView)
 export class NoteResolver {
   constructor(@InjectModel(Note.name) private noteModel: Model<Note>,
@@ -16,13 +19,16 @@ export class NoteResolver {
     return {
       id: entity._id,
       title: entity.title,
-      content: entity.content
+      content: entity.content,
+      owner: entity.owner
+        ? { id: entity.owner._id, email: entity.owner.email, name: entity.owner.name }
+        : null
     }
   }
 
   @Query(() => [ NoteView ], { name: 'NoteFind' })
   async find(): Promise<NoteView[]> {
-    const data = await this.noteModel.find();
+    const data = await this.noteModel.find().populate('owner');
     return data.map(NoteResolver.assembler);
   }
 

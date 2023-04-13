@@ -1,20 +1,24 @@
 import { Note } from '../schema/note';
 import { NoteDto } from '../dto/note.dto';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { NoteRepository } from '../repository/note.repository';
+import { UserRepository } from '../../user/repository/user.repository';
+import { RequestContext } from '../../shared/service/request-context';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class NoteService {
-  constructor(private noteRepository: NoteRepository) {}
+  constructor(private noteRepository: NoteRepository,
+              private userRepository: UserRepository,
+              private requestContext: RequestContext) {}
 
   async create(dto: NoteDto): Promise<Note> {
     const entity = new Note();
+    entity.owner = await this.userRepository.findOne({ _id: this.requestContext.authenticatedUser.id })
     entity.title = dto.title;
     entity.content = dto.content;
 
     return this.noteRepository.create(entity);
   }
-
 
   async update(_id: string, dto: NoteDto): Promise<void> {
     const entity = await this.noteRepository.findOne({ _id });

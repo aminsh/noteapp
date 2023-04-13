@@ -9,6 +9,7 @@ import { UserModule } from './user/user.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { VoidResolver } from 'graphql-scalars';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { VoidResolver } from 'graphql-scalars';
         Void: VoidResolver
       }
     }),
+    SharedModule,
     NoteModule,
     UserModule
   ],

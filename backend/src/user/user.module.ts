@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './shema/user';
 import { UserService } from './service/user.service';
@@ -8,6 +8,7 @@ import { AuthModule } from 'dx-nest-core/auth';
 import { AuthUserSerializationServiceImp } from './service/auth-user-serialization.service';
 import { UserRepository } from './repository/user.repository';
 
+@Global()
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -28,6 +29,9 @@ import { UserRepository } from './repository/user.repository';
   ],
   controllers: [
     UserController
+  ],
+  exports: [
+    UserRepository
   ]
 })
 export class UserModule {

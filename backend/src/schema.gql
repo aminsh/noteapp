@@ -6,16 +6,17 @@ type IdentityResponse {
   id: String!
 }
 
-type NoteView {
-  id: String!
-  title: String!
-  content: String!
-}
-
 type UserView {
   id: String!
   name: String!
   email: String!
+}
+
+type NoteView {
+  owner: UserView
+  id: String!
+  title: String!
+  content: String!
 }
 
 type TokenResponse {
