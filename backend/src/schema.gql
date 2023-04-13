@@ -6,6 +6,12 @@ type IdentityResponse {
   id: String!
 }
 
+type NoteView {
+  id: String!
+  title: String!
+  content: String!
+}
+
 type UserView {
   id: String!
   name: String!
@@ -19,14 +25,26 @@ type TokenResponse {
 }
 
 type Query {
+  NoteFind: [NoteView!]!
   getUsers: [UserView!]!
 }
 
 type Mutation {
+  NoteCreate(noteCreate: NoteDto!): NoteView!
+  NoteUpdate(noteId: String!, noteUpdate: NoteDto!): Void
+  NoteRemove(noteId: String!): Void
   register(userRegister: RegisterDTO!): IdentityResponse!
   login(userLogin: LoginDTO!): TokenResponse!
   update(userId: String!, updateUser: UpdateUserDTO!): Void
 }
+
+input NoteDto {
+  title: String!
+  content: String!
+}
+
+"""Represents NULL values"""
+scalar Void
 
 input RegisterDTO {
   name: String!
@@ -38,9 +56,6 @@ input LoginDTO {
   email: String!
   password: String!
 }
-
-"""Represents NULL values"""
-scalar Void
 
 input UpdateUserDTO {
   name: String!
