@@ -70,7 +70,7 @@ describe('User Service', () => {
 
       jest.spyOn(userRepository, 'create')
         .mockImplementation(async (entity: User) => {
-          entity._id = user['_id'];
+          entity._id = user._id;
           return entity;
         });
 
