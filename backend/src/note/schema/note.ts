@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Entity } from '../../shared/type';
 import { User } from '../../user/shema/user';
-
+import { File } from '../../shared/schema/file';
 
 @Schema()
 export class Note extends Entity {
@@ -14,6 +14,9 @@ export class Note extends Entity {
 
   @Prop()
   content: string;
+
+  @Prop([ { type: mongoose.Schema.Types.ObjectId, ref: File.name }])
+  attachments: File[]
 }
 
 export const NoteSchema = SchemaFactory.createForClass(Note);

@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class NoteDto {
@@ -10,4 +10,10 @@ export class NoteDto {
   @Field()
   @IsString()
   content: string;
+
+  @Field(() => [ String ], { nullable: true })
+  @IsString({ each: true })
+  @IsArray()
+  @IsOptional()
+  attachments: string[];
 }

@@ -12,11 +12,21 @@ type UserView {
   email: String!
 }
 
+type FileView {
+  id: String!
+  createdBy: UserView
+  filename: String!
+  originalName: String!
+  mimeType: String!
+  size: Float!
+}
+
 type NoteView {
   owner: UserView
   id: String!
   title: String!
   content: String!
+  attachments: [FileView!]
 }
 
 type TokenResponse {
@@ -42,6 +52,7 @@ type Mutation {
 input NoteDto {
   title: String!
   content: String!
+  attachments: [String!]
 }
 
 """Represents NULL values"""

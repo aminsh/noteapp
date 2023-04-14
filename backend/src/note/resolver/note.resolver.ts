@@ -8,34 +8,32 @@ import { NoteDto } from '../dto/note.dto';
 import { VoidResolver } from 'graphql-scalars';
 import { UseGuards } from '@nestjs/common';
 import { JwtGqlAuthenticationGuard } from 'dx-nest-core/auth';
+import { noteAssembler } from '../dto/note-assembler';
+import { RequestContext } from '../../shared/service/request-context';
 
 @UseGuards(JwtGqlAuthenticationGuard)
 @Resolver(() => NoteView)
 export class NoteResolver {
   constructor(@InjectModel(Note.name) private noteModel: Model<Note>,
-              private noteService: NoteService) {}
-
-  private static assembler(entity: Note): NoteView {
-    return {
-      id: entity._id,
-      title: entity.title,
-      content: entity.content,
-      owner: entity.owner
-        ? { id: entity.owner._id, email: entity.owner.email, name: entity.owner.name }
-        : null
-    }
-  }
+              private noteService: NoteService,
+              private requestContext: RequestContext) {}
 
   @Query(() => [ NoteView ], { name: 'NoteFind' })
   async find(): Promise<NoteView[]> {
-    const data = await this.noteModel.find().populate('owner');
-    return data.map(NoteResolver.assembler);
+    const data = await this.noteModel.find({
+      owner: {
+        _id: this.requestContext.authenticatedUser.id
+      }
+    })
+      .populate('owner')
+      .populate('attachments');
+    return data.map(noteAssembler);
   }
 
   @Mutation(() => NoteView, { name: 'NoteCreate' })
   async create(@Args('noteCreate') dto: NoteDto): Promise<NoteView> {
     const result = await this.noteService.create(dto);
-    return NoteResolver.assembler(result);
+    return noteAssembler(result);
   }
 
   @Mutation(() => VoidResolver, {
