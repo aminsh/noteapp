@@ -15,5 +15,5 @@ export class NoteDto {
   @IsString({ each: true })
   @IsArray()
   @IsOptional()
-  attachments: string[];
+  attachments?: string[];
 }

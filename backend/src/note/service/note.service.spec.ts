@@ -5,18 +5,23 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Note } from '../schema/note';
 import { NoteDto } from '../dto/note.dto';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { UserRepository } from '../../user/repository/user.repository';
 import { AuthenticatedUser } from '../../user/user.type';
 import { User } from '../../user/shema/user';
 import { RequestContext } from '../../shared/service/request-context';
+import { FileRepository } from '../../shared/repository/file.repository';
+import { File } from '../../shared/schema/file';
+import { NOTE_MESSAGE } from '../note.constants';
 
 describe('Note Service test', () => {
   let mockModelNote: Model<Note>;
   let mockModelUser: Model<User>;
+  let mockModelFile: Model<File>;
   let noteService: NoteService;
   let noteRepository: NoteRepository;
   let userRepository: UserRepository;
+  let fileRepository: FileRepository;
 
   const authenticatedUser: AuthenticatedUser = {
     id: 'AUTHENTICATED-USER-ID',
@@ -29,12 +34,17 @@ describe('Note Service test', () => {
         NoteService,
         NoteRepository,
         UserRepository,
+        FileRepository,
         {
           provide: getModelToken(Note.name),
           useValue: Model
         },
         {
           provide: getModelToken(User.name),
+          useValue: Model
+        },
+        {
+          provide: getModelToken(File.name),
           useValue: Model
         },
         {
@@ -47,9 +57,11 @@ describe('Note Service test', () => {
 
     mockModelNote = moduleRef.get<Model<Note>>(getModelToken(Note.name));
     mockModelUser = moduleRef.get(getModelToken(User.name));
+    mockModelFile = moduleRef.get(getModelToken(File.name));
     noteRepository = moduleRef.get(NoteRepository);
     noteService = await moduleRef.resolve(NoteService);
     userRepository = moduleRef.get(UserRepository);
+    fileRepository = moduleRef.get(FileRepository);
   });
 
   describe('Create Method', () => {
@@ -81,7 +93,7 @@ describe('Note Service test', () => {
       expect(entity.content).toBe(dto.content);
     });
 
-    it('should have owner', async () =>  {
+    it('should have owner', async () => {
       jest
         .spyOn(userRepository, 'findOne')
         .mockResolvedValue({ _id: authenticatedUser.id, email: authenticatedUser.email } as User);
@@ -178,6 +190,44 @@ describe('Note Service test', () => {
       await noteService.remove(id);
 
       expect(isCalledRepository).toBeTruthy();
+    });
+  })
+
+  describe('Attachments test', () => {
+    it('should be throw when attachments are invalid', async () => {
+      jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue({ _id: authenticatedUser.id, email: authenticatedUser.email } as User);
+
+      jest.spyOn(fileRepository, 'find')
+        .mockResolvedValue([
+          { _id: 'first' } as File
+        ])
+
+      try {
+        await noteService['resolveFiles']([ 'first', 'second' ], new Note());
+        expect(true).toBe(false);
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException);
+        expect(e.message).toBe(NOTE_MESSAGE.FILES_IS_INVALID);
+      }
+    });
+
+    it('should be succeed', async () => {
+      jest
+        .spyOn(userRepository, 'findOne')
+        .mockResolvedValue({ _id: authenticatedUser.id, email: authenticatedUser.email } as User);
+
+      jest.spyOn(fileRepository, 'find')
+        .mockResolvedValue([
+          { _id: 'first' } as File,
+          { _id: 'second' } as File
+        ])
+
+      const entity = new Note();
+      await noteService['resolveFiles']([ 'first', 'second' ], entity);
+
+      expect(entity.attachments.length).toBe(2);
     });
   })
 })

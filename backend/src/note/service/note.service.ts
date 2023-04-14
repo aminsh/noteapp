@@ -50,6 +50,9 @@ export class NoteService {
   }
 
   private async resolveFiles(filesDto: string[], entity: Note): Promise<void> {
+    if(!filesDto?.length)
+      return;
+
     const files: File[] = await this.fileRepository.find({
       _id: {
         $in: filesDto
