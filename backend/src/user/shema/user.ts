@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Entity } from '../../shared/type';
 
-@Schema()
+@Schema({ timestamps: true })
 export class User extends Entity {
   @Prop()
   name: string;

@@ -22,12 +22,19 @@ type FileView {
 }
 
 type NoteView {
+  createdAt: DateTime
+  updatedAt: DateTime
   owner: UserView
   id: String!
   title: String!
   content: String!
   attachments: [FileView!]
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type TokenResponse {
   access_token: String!

@@ -8,6 +8,8 @@ export const noteAssembler = (entity: Note): NoteView => {
     return ;
 
   return  {
+    createdAt: entity.createdAt,
+    updatedAt: entity.updatedAt,
     id: entity._id,
     title: entity.title,
     content: entity.content,

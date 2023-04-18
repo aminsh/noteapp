@@ -13,6 +13,10 @@ export class IdentityResponse {
 
 export class Entity {
   _id: string;
+
+  createdAt: Date;
+
+  updatedAt: Date;
 }
 
 export interface Repository<TEntity> {

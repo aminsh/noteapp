@@ -4,6 +4,12 @@ import { FileView } from '../../shared/dto/file-view';
 
 @ObjectType()
 export class NoteView {
+  @Field(() => Date, { nullable: true })
+  createdAt: Date;
+
+  @Field(() => Date, { nullable: true })
+  updatedAt: Date;
+
   @Field(() => UserView, { nullable: true })
   owner: UserView;
 
