@@ -13,6 +13,8 @@ import { RequestContext } from '../../shared/service/request-context';
 import { FileRepository } from '../../shared/repository/file.repository';
 import { File } from '../../shared/schema/file';
 import { NOTE_MESSAGE } from '../note.constants';
+import { NoteShareDTO } from '../dto/note-shared.dto';
+import { NoteAccess } from '../schema/note-shared';
 
 describe('Note Service test', () => {
   let mockModelNote: Model<Note>;
@@ -133,6 +135,27 @@ describe('Note Service test', () => {
         .rejects.toBeInstanceOf(NotFoundException)
     });
 
+    it('should throw Exception when the user is not owner', async () => {
+      const dto: NoteDto = {
+        title: 'This is note title',
+        content: 'This is note content'
+      };
+      const id = 'NOTE-ID';
+      const userId = 'USER-ID'
+
+      jest
+        .spyOn(noteRepository, 'findOne')
+        .mockResolvedValue({ _id: id, owner: { _id: userId } } as Note)
+
+      try {
+        await noteService.update(id, dto)
+        expect(true).toBe(false)
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException)
+        expect(e.message).toBe(NOTE_MESSAGE.THE_CURRENT_USER_IS_NOT_ALLOWED_TO_EDIT_THE_NOTE)
+      }
+    });
+
     it('should be succeed', async () => {
       const dto: NoteDto = {
         title: 'This is note title',
@@ -145,7 +168,7 @@ describe('Note Service test', () => {
 
       jest
         .spyOn(noteRepository, 'findOne')
-        .mockResolvedValue({} as Note);
+        .mockResolvedValue({ owner: { _id: authenticatedUser.id } } as Note);
 
       jest.spyOn(noteRepository, 'update')
         .mockImplementation(async (entity: Note) => {
@@ -229,5 +252,90 @@ describe('Note Service test', () => {
 
       expect(entity.attachments.length).toBe(2);
     });
+  })
+
+  describe('Share Users', () => {
+    it('should throw NotFoundException when note is not exist', async () => {
+      const noteId = 'NOTE-ID'
+      const userId = 'USER-ID'
+      const shareDTO: NoteShareDTO[] = [
+        { userId, access: NoteAccess.AllowEdit }
+      ]
+
+      jest
+        .spyOn(noteRepository, 'findOne')
+        .mockResolvedValue(null)
+
+      await expect(noteService.share(noteId, shareDTO)).rejects.toBeInstanceOf(NotFoundException)
+    });
+
+    it('User is not allowed to share a note with yourself', async () => {
+      const noteId = 'NOTE-ID'
+      const userId = 'USER-ID'
+      const shareDTO: NoteShareDTO[] = [
+        { userId, access: NoteAccess.AllowEdit }
+      ]
+
+      jest
+        .spyOn(noteRepository, 'findOne')
+        .mockResolvedValue({ owner: { _id: userId } } as Note)
+
+      try {
+        await noteService.share(noteId, shareDTO)
+        expect(true).toBe(false)
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException)
+        expect(e.message).toBe(NOTE_MESSAGE.USER_IS_NOT_ALLOWED_TO_SHARE_A_NOTE_WITH_YOURSELF)
+      }
+    })
+
+    it('should throw Exception when users in share DTO are not valid', async () => {
+      const noteId = 'NOTE-ID'
+      const userId = 'USER-ID'
+      const shareDTO: NoteShareDTO[] = [
+        { userId: 'OTHER-USER', access: NoteAccess.AllowEdit }
+      ]
+
+      jest
+        .spyOn(noteRepository, 'findOne')
+        .mockResolvedValue({ owner: { _id: userId } } as Note)
+
+      jest
+        .spyOn(userRepository, 'find')
+        .mockResolvedValue([])
+
+      try {
+        await noteService.share(noteId, shareDTO)
+        expect(true).toBe(false)
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException)
+        expect(e.message).toBe(NOTE_MESSAGE.ONE_OR_MORE_USERS_ARE_INVALID)
+      }
+    })
+
+    it('should throw Exception when the user doesnt have access to edit the note', async () => {
+      const dto: NoteDto = {
+        title: 'This is note title',
+        content: 'This is note content'
+      };
+      const id = 'NOTE-ID';
+      const userId = 'USER-ID'
+
+      jest
+        .spyOn(noteRepository, 'findOne')
+        .mockResolvedValue({
+          _id: id,
+          owner: { _id: userId },
+          shared: [ { user: { _id: 'ANY-USER' }, access: NoteAccess.ViewOnly } ]
+        } as Note)
+
+      try {
+        await noteService.update(id, dto)
+        expect(true).toBe(false)
+      } catch (e) {
+        expect(e).toBeInstanceOf(BadRequestException)
+        expect(e.message).toBe(NOTE_MESSAGE.THE_CURRENT_USER_IS_NOT_ALLOWED_TO_EDIT_THE_NOTE)
+      }
+    })
   })
 })

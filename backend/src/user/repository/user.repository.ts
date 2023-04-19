@@ -8,7 +8,11 @@ export class UserRepository {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   findOne(filter: FilterQuery<User>, projection?: ProjectionType<User>): Promise<User> {
-    return this.userModel.findOne(filter, projection)
+    return this.userModel.findOne(filter, projection);
+  }
+
+  find(filter: FilterQuery<User>, projection?: ProjectionType<User>): Promise<User[]> {
+    return this.userModel.find(filter, projection);
   }
 
   create(entity: User): Promise<User> {

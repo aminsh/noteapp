@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { UserView } from '../../user/dto/user.view';
 import { FileView } from '../../shared/dto/file-view';
+import { NoteSharedView } from './note-shared.view';
 
 @ObjectType()
 export class NoteView {
@@ -24,4 +25,7 @@ export class NoteView {
 
   @Field(() => [ FileView ], { nullable: true })
   attachments: FileView[];
+
+  @Field(() => [ NoteSharedView ], { nullable: true })
+  shared: NoteSharedView[];
 }

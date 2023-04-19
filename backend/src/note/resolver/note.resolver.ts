@@ -10,6 +10,7 @@ import { UseGuards } from '@nestjs/common';
 import { JwtGqlAuthenticationGuard } from 'dx-nest-core/auth';
 import { noteAssembler } from '../dto/note-assembler';
 import { RequestContext } from '../../shared/service/request-context';
+import { NoteShareDTO } from '../dto/note-shared.dto';
 
 @UseGuards(JwtGqlAuthenticationGuard)
 @Resolver(() => NoteView)
@@ -26,7 +27,8 @@ export class NoteResolver {
       }
     })
       .populate('owner')
-      .populate('attachments');
+      .populate('attachments')
+      .populate({ path: 'shared', populate: { path: 'user' } });
     return data.map(noteAssembler);
   }
 
@@ -40,8 +42,10 @@ export class NoteResolver {
     name: 'NoteUpdate',
     nullable: true
   })
-  update(@Args('noteId') id: string,
-         @Args('noteUpdate') dto: NoteDto): Promise<void> {
+  update(
+    @Args('noteId') id: string,
+    @Args('noteUpdate') dto: NoteDto
+  ): Promise<void> {
     return this.noteService.update(id, dto);
   }
 
@@ -51,5 +55,16 @@ export class NoteResolver {
   })
   remove(@Args('noteId') id: string): Promise<void> {
     return this.noteService.remove(id);
+  }
+
+  @Mutation(() => VoidResolver, {
+    name: 'NoteShare',
+    nullable: true
+  })
+  share(
+    @Args('noteId') id: string,
+    @Args({ name: 'noteShare', type: () => [ NoteShareDTO ] }) dto: NoteShareDTO[]
+  ): Promise<void> {
+    return this.noteService.share(id, dto);
   }
 }

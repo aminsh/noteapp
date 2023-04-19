@@ -21,6 +21,16 @@ type FileView {
   size: Float!
 }
 
+type NoteSharedView {
+  user: UserView
+  access: NoteAccess!
+}
+
+enum NoteAccess {
+  ViewOnly
+  AllowEdit
+}
+
 type NoteView {
   createdAt: DateTime
   updatedAt: DateTime
@@ -29,6 +39,7 @@ type NoteView {
   title: String!
   content: String!
   attachments: [FileView!]
+  shared: [NoteSharedView!]
 }
 
 """
@@ -51,6 +62,7 @@ type Mutation {
   NoteCreate(noteCreate: NoteDto!): NoteView!
   NoteUpdate(noteId: String!, noteUpdate: NoteDto!): Void
   NoteRemove(noteId: String!): Void
+  NoteShare(noteId: String!, noteShare: [NoteShareDTO!]!): Void
   register(userRegister: RegisterDTO!): IdentityResponse!
   login(userLogin: LoginDTO!): TokenResponse!
   update(userId: String!, updateUser: UpdateUserDTO!): Void
@@ -64,6 +76,11 @@ input NoteDto {
 
 """Represents NULL values"""
 scalar Void
+
+input NoteShareDTO {
+  userId: String!
+  access: NoteAccess!
+}
 
 input RegisterDTO {
   name: String!
