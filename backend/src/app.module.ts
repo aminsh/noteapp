@@ -1,15 +1,15 @@
-import { join } from 'path';
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { NoteModule } from './note/note.module';
-import { UserModule } from './user/user.module';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { VoidResolver } from 'graphql-scalars';
-import { SharedModule } from './shared/shared.module';
+import { join } from 'path'
+import { Module } from '@nestjs/common'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { MongooseModule } from '@nestjs/mongoose'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { NoteModule } from './note/note.module'
+import { UserModule } from './user/user.module'
+import { GraphQLModule } from '@nestjs/graphql'
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
+import { VoidResolver } from 'graphql-scalars'
+import { SharedModule } from './shared/shared.module'
 
 @Module({
   imports: [

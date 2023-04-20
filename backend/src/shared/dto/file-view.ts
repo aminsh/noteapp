@@ -1,23 +1,23 @@
-import { UserView } from '../../user/dto/user.view';
-import { Field, ObjectType } from '@nestjs/graphql';
+import { UserView } from '../../user/dto/user.view'
+import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class FileView {
   @Field()
-  id: string;
+  id: string
 
   @Field(() => UserView, { nullable: true })
-  createdBy: UserView;
+  createdBy: UserView
 
   @Field()
-  filename: string;
+  filename: string
 
   @Field()
-  originalName: string;
+  originalName: string
 
   @Field()
-  mimeType: string;
+  mimeType: string
 
   @Field()
-  size: number;
+  size: number
 }

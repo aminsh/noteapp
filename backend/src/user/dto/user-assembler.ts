@@ -1,9 +1,9 @@
-import { User } from '../shema/user';
-import { UserView } from './user.view';
+import { User } from '../shema/user'
+import { UserView } from './user.view'
 
 export const userAssembler = (entity: User): UserView => {
   if (!entity)
-    return null;
+    return null
 
   return {
     id: entity._id,

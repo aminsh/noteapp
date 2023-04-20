@@ -1,16 +1,16 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql';
-import { IsString } from 'class-validator';
-import { NoteAccess } from '../schema/note-shared';
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+import { IsString } from 'class-validator'
+import { NoteAccess } from '../schema/note-shared'
 
 @InputType()
 export class NoteShareDTO {
   @Field()
   @IsString()
-  userId: string;
+  userId: string
 
   @Field(() => NoteAccess)
   @IsString()
-  access: NoteAccess;
+  access: NoteAccess
 }
 
-registerEnumType(NoteAccess, { name: 'NoteAccess' });
+registerEnumType(NoteAccess, { name: 'NoteAccess' })

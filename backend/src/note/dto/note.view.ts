@@ -1,31 +1,31 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { UserView } from '../../user/dto/user.view';
-import { FileView } from '../../shared/dto/file-view';
-import { NoteSharedView } from './note-shared.view';
+import { Field, ObjectType } from '@nestjs/graphql'
+import { UserView } from '../../user/dto/user.view'
+import { FileView } from '../../shared/dto/file-view'
+import { NoteSharedView } from './note-shared.view'
 
 @ObjectType()
 export class NoteView {
   @Field(() => Date, { nullable: true })
-  createdAt: Date;
+  createdAt: Date
 
   @Field(() => Date, { nullable: true })
-  updatedAt: Date;
+  updatedAt: Date
 
   @Field(() => UserView, { nullable: true })
-  owner: UserView;
+  owner: UserView
 
   @Field()
-  id: string;
+  id: string
 
   @Field()
-  title: string;
+  title: string
 
   @Field()
-  content: string;
+  content: string
 
   @Field(() => [ FileView ], { nullable: true })
-  attachments: FileView[];
+  attachments: FileView[]
 
   @Field(() => [ NoteSharedView ], { nullable: true })
-  shared: NoteSharedView[];
+  shared: NoteSharedView[]
 }

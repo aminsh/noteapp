@@ -1,13 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class UserView {
   @Field()
-  id: string;
+  id: string
 
   @Field()
-  name: string;
+  name: string
 
   @Field()
-  email: string;
+  email: string
 }

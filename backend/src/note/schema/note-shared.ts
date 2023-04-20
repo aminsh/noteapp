@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
-import { User } from '../../user/shema/user';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose from 'mongoose'
+import { User } from '../../user/shema/user'
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 
 export enum NoteAccess {
   ViewOnly = 'ViewOnly',
@@ -10,10 +10,10 @@ export enum NoteAccess {
 @Schema({ _id: false })
 export class NoteShared {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
-  user: User;
+  user: User
 
   @Prop({ type: String, enum: Object.values(NoteAccess) })
-  access: NoteAccess;
+  access: NoteAccess
 }
 
 export const NoteSharedSchema = SchemaFactory.createForClass(NoteShared)

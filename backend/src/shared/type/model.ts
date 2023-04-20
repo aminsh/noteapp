@@ -1,5 +1,5 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { FilterQuery, ProjectionType } from 'mongoose';
+import { Field, ObjectType } from '@nestjs/graphql'
+import { FilterQuery, ProjectionType } from 'mongoose'
 
 export interface Identity {
   id: string;
@@ -8,15 +8,15 @@ export interface Identity {
 @ObjectType()
 export class IdentityResponse {
   @Field()
-  id: string;
+  id: string
 }
 
 export class Entity {
-  _id: string;
+  _id: string
 
-  createdAt: Date;
+  createdAt: Date
 
-  updatedAt: Date;
+  updatedAt: Date
 }
 
 export interface Repository<TEntity> {

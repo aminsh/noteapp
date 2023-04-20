@@ -1,29 +1,29 @@
-import { NoteService } from './note.service';
-import { NoteRepository } from '../repository/note.repository';
-import { Test } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Note } from '../schema/note';
-import { NoteDto } from '../dto/note.dto';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { UserRepository } from '../../user/repository/user.repository';
-import { AuthenticatedUser } from '../../user/user.type';
-import { User } from '../../user/shema/user';
-import { RequestContext } from '../../shared/service/request-context';
-import { FileRepository } from '../../shared/repository/file.repository';
-import { File } from '../../shared/schema/file';
-import { NOTE_MESSAGE } from '../note.constants';
-import { NoteShareDTO } from '../dto/note-shared.dto';
-import { NoteAccess } from '../schema/note-shared';
+import { NoteService } from './note.service'
+import { NoteRepository } from '../repository/note.repository'
+import { Test } from '@nestjs/testing'
+import { getModelToken } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
+import { Note } from '../schema/note'
+import { NoteDto } from '../dto/note.dto'
+import { BadRequestException, NotFoundException } from '@nestjs/common'
+import { UserRepository } from '../../user/repository/user.repository'
+import { AuthenticatedUser } from '../../user/user.type'
+import { User } from '../../user/shema/user'
+import { RequestContext } from '../../shared/service/request-context'
+import { FileRepository } from '../../shared/repository/file.repository'
+import { File } from '../../shared/schema/file'
+import { NOTE_MESSAGE } from '../note.constants'
+import { NoteShareDTO } from '../dto/note-shared.dto'
+import { NoteAccess } from '../schema/note-shared'
 
 describe('Note Service test', () => {
-  let mockModelNote: Model<Note>;
-  let mockModelUser: Model<User>;
-  let mockModelFile: Model<File>;
-  let noteService: NoteService;
-  let noteRepository: NoteRepository;
-  let userRepository: UserRepository;
-  let fileRepository: FileRepository;
+  let mockModelNote: Model<Note>
+  let mockModelUser: Model<User>
+  let mockModelFile: Model<File>
+  let noteService: NoteService
+  let noteRepository: NoteRepository
+  let userRepository: UserRepository
+  let fileRepository: FileRepository
 
   const authenticatedUser: AuthenticatedUser = {
     id: 'AUTHENTICATED-USER-ID',
@@ -55,92 +55,92 @@ describe('Note Service test', () => {
         }
       ]
     })
-      .compile();
+      .compile()
 
-    mockModelNote = moduleRef.get<Model<Note>>(getModelToken(Note.name));
-    mockModelUser = moduleRef.get(getModelToken(User.name));
-    mockModelFile = moduleRef.get(getModelToken(File.name));
-    noteRepository = moduleRef.get(NoteRepository);
-    noteService = await moduleRef.resolve(NoteService);
-    userRepository = moduleRef.get(UserRepository);
-    fileRepository = moduleRef.get(FileRepository);
-  });
+    mockModelNote = moduleRef.get<Model<Note>>(getModelToken(Note.name))
+    mockModelUser = moduleRef.get(getModelToken(User.name))
+    mockModelFile = moduleRef.get(getModelToken(File.name))
+    noteRepository = moduleRef.get(NoteRepository)
+    noteService = await moduleRef.resolve(NoteService)
+    userRepository = moduleRef.get(UserRepository)
+    fileRepository = moduleRef.get(FileRepository)
+  })
 
   describe('Create Method', () => {
     it('should be succeed', async () => {
       jest
         .spyOn(userRepository, 'findOne')
-        .mockResolvedValue({ _id: authenticatedUser.id, email: authenticatedUser.email } as User);
+        .mockResolvedValue({ _id: authenticatedUser.id, email: authenticatedUser.email } as User)
 
       const dto: NoteDto = {
         title: 'This is note title',
         content: 'This is note content'
-      };
+      }
 
-      let isCalledRepository: boolean = false;
+      let isCalledRepository = false
 
       jest.spyOn(noteRepository, 'create')
         .mockImplementation(async (entity: Note) => {
-          isCalledRepository = true;
+          isCalledRepository = true
           return {
             _id: 'NOTE-ID',
             ...entity
-          };
-        });
+          }
+        })
 
-      const entity = await noteService.create(dto);
+      const entity = await noteService.create(dto)
 
-      expect(isCalledRepository).toBeTruthy();
-      expect(entity.title).toBe(dto.title);
-      expect(entity.content).toBe(dto.content);
-    });
+      expect(isCalledRepository).toBeTruthy()
+      expect(entity.title).toBe(dto.title)
+      expect(entity.content).toBe(dto.content)
+    })
 
     it('should have owner', async () => {
       jest
         .spyOn(userRepository, 'findOne')
-        .mockResolvedValue({ _id: authenticatedUser.id, email: authenticatedUser.email } as User);
+        .mockResolvedValue({ _id: authenticatedUser.id, email: authenticatedUser.email } as User)
 
       const dto: NoteDto = {
         title: 'This is note title',
         content: 'This is note content'
-      };
+      }
 
-      let assignedOwner: User;
+      let assignedOwner: User
 
       jest.spyOn(noteRepository, 'create')
         .mockImplementation(async (entity: Note) => {
-          assignedOwner = entity.owner;
-          return entity;
-        });
+          assignedOwner = entity.owner
+          return entity
+        })
 
-      const entity = await noteService.create(dto);
+      const entity = await noteService.create(dto)
 
-      expect(entity.owner._id).toBe(authenticatedUser.id);
-    });
-  });
+      expect(entity.owner._id).toBe(authenticatedUser.id)
+    })
+  })
 
   describe('Update Method', () => {
     it('should throw NotFoundException', async () => {
       const dto: NoteDto = {
         title: 'This is note title',
         content: 'This is note content'
-      };
-      const id = 'NOTE-ID';
+      }
+      const id = 'NOTE-ID'
 
       jest
         .spyOn(noteRepository, 'findOne')
-        .mockResolvedValue(null);
+        .mockResolvedValue(null)
 
       await expect(noteService.update(id, dto))
         .rejects.toBeInstanceOf(NotFoundException)
-    });
+    })
 
     it('should throw Exception when the user is not owner', async () => {
       const dto: NoteDto = {
         title: 'This is note title',
         content: 'This is note content'
-      };
-      const id = 'NOTE-ID';
+      }
+      const id = 'NOTE-ID'
       const userId = 'USER-ID'
 
       jest
@@ -154,73 +154,73 @@ describe('Note Service test', () => {
         expect(e).toBeInstanceOf(BadRequestException)
         expect(e.message).toBe(NOTE_MESSAGE.THE_CURRENT_USER_IS_NOT_ALLOWED_TO_EDIT_THE_NOTE)
       }
-    });
+    })
 
     it('should be succeed', async () => {
       const dto: NoteDto = {
         title: 'This is note title',
         content: 'This is note content'
-      };
-      const id = 'NOTE-ID';
+      }
+      const id = 'NOTE-ID'
 
-      let isCalledRepository: boolean = false;
-      let entityArgument: Note;
+      let isCalledRepository = false
+      let entityArgument: Note
 
       jest
         .spyOn(noteRepository, 'findOne')
-        .mockResolvedValue({ owner: { _id: authenticatedUser.id } } as Note);
+        .mockResolvedValue({ owner: { _id: authenticatedUser.id } } as Note)
 
       jest.spyOn(noteRepository, 'update')
         .mockImplementation(async (entity: Note) => {
-          isCalledRepository = true;
-          entityArgument = entity;
-        });
+          isCalledRepository = true
+          entityArgument = entity
+        })
 
-      await noteService.update(id, dto);
+      await noteService.update(id, dto)
 
-      expect(isCalledRepository).toBeTruthy();
-      expect(entityArgument.title).toBe(dto.title);
-      expect(entityArgument.content).toBe(dto.content);
-    });
+      expect(isCalledRepository).toBeTruthy()
+      expect(entityArgument.title).toBe(dto.title)
+      expect(entityArgument.content).toBe(dto.content)
+    })
   })
 
   describe('Remove Method', () => {
     it('should throw NotFoundException', async () => {
-      const id = 'NOTE-ID';
+      const id = 'NOTE-ID'
 
       jest
         .spyOn(noteRepository, 'findOne')
-        .mockResolvedValue(null);
+        .mockResolvedValue(null)
 
       await expect(noteService.remove(id))
         .rejects.toBeInstanceOf(NotFoundException)
-    });
+    })
 
     it('should be succeed', async () => {
-      const id = 'NOTE-ID';
+      const id = 'NOTE-ID'
 
-      let isCalledRepository: boolean = false;
+      let isCalledRepository = false
 
       jest
         .spyOn(noteRepository, 'findOne')
-        .mockResolvedValue({} as Note);
+        .mockResolvedValue({} as Note)
 
       jest.spyOn(noteRepository, 'remove')
         .mockImplementation(async () => {
-          isCalledRepository = true;
-        });
+          isCalledRepository = true
+        })
 
-      await noteService.remove(id);
+      await noteService.remove(id)
 
-      expect(isCalledRepository).toBeTruthy();
-    });
+      expect(isCalledRepository).toBeTruthy()
+    })
   })
 
   describe('Attachments test', () => {
     it('should be throw when attachments are invalid', async () => {
       jest
         .spyOn(userRepository, 'findOne')
-        .mockResolvedValue({ _id: authenticatedUser.id, email: authenticatedUser.email } as User);
+        .mockResolvedValue({ _id: authenticatedUser.id, email: authenticatedUser.email } as User)
 
       jest.spyOn(fileRepository, 'find')
         .mockResolvedValue([
@@ -228,18 +228,18 @@ describe('Note Service test', () => {
         ])
 
       try {
-        await noteService['resolveFiles']([ 'first', 'second' ], new Note());
-        expect(true).toBe(false);
+        await noteService['resolveFiles']([ 'first', 'second' ], new Note())
+        expect(true).toBe(false)
       } catch (e) {
-        expect(e).toBeInstanceOf(BadRequestException);
-        expect(e.message).toBe(NOTE_MESSAGE.FILES_IS_INVALID);
+        expect(e).toBeInstanceOf(BadRequestException)
+        expect(e.message).toBe(NOTE_MESSAGE.FILES_IS_INVALID)
       }
-    });
+    })
 
     it('should be succeed', async () => {
       jest
         .spyOn(userRepository, 'findOne')
-        .mockResolvedValue({ _id: authenticatedUser.id, email: authenticatedUser.email } as User);
+        .mockResolvedValue({ _id: authenticatedUser.id, email: authenticatedUser.email } as User)
 
       jest.spyOn(fileRepository, 'find')
         .mockResolvedValue([
@@ -247,11 +247,11 @@ describe('Note Service test', () => {
           { _id: 'second' } as File
         ])
 
-      const entity = new Note();
-      await noteService['resolveFiles']([ 'first', 'second' ], entity);
+      const entity = new Note()
+      await noteService['resolveFiles']([ 'first', 'second' ], entity)
 
-      expect(entity.attachments.length).toBe(2);
-    });
+      expect(entity.attachments.length).toBe(2)
+    })
   })
 
   describe('Share Users', () => {
@@ -267,7 +267,7 @@ describe('Note Service test', () => {
         .mockResolvedValue(null)
 
       await expect(noteService.share(noteId, shareDTO)).rejects.toBeInstanceOf(NotFoundException)
-    });
+    })
 
     it('User is not allowed to share a note with yourself', async () => {
       const noteId = 'NOTE-ID'
@@ -317,8 +317,8 @@ describe('Note Service test', () => {
       const dto: NoteDto = {
         title: 'This is note title',
         content: 'This is note content'
-      };
-      const id = 'NOTE-ID';
+      }
+      const id = 'NOTE-ID'
       const userId = 'USER-ID'
 
       jest

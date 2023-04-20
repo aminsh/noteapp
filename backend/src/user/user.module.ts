@@ -1,12 +1,12 @@
-import { Global, Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './shema/user';
-import { UserService } from './service/user.service';
-import { UserController } from './user.controller';
-import { UserResolver } from './resolver/user.resolver';
-import { AuthModule } from 'dx-nest-core/auth';
-import { AuthUserSerializationServiceImp } from './service/auth-user-serialization.service';
-import { UserRepository } from './repository/user.repository';
+import { Global, Module } from '@nestjs/common'
+import { MongooseModule } from '@nestjs/mongoose'
+import { User, UserSchema } from './shema/user'
+import { UserService } from './service/user.service'
+import { UserController } from './user.controller'
+import { UserResolver } from './resolver/user.resolver'
+import { AuthModule } from 'dx-nest-core/auth'
+import { AuthUserSerializationServiceImp } from './service/auth-user-serialization.service'
+import { UserRepository } from './repository/user.repository'
 
 @Global()
 @Module({

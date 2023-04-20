@@ -1,6 +1,6 @@
-import { File } from '../schema/file';
-import { FileView } from './file-view';
-import { userAssembler } from '../../user/dto/user-assembler';
+import { File } from '../schema/file'
+import { FileView } from './file-view'
+import { userAssembler } from '../../user/dto/user-assembler'
 
 export const fileAssembler = (entity: File): FileView => {
   return {

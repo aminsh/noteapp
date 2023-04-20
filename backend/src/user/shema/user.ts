@@ -1,19 +1,19 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Entity } from '../../shared/type';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
+import { Entity } from '../../shared/type'
 
 @Schema({ timestamps: true })
 export class User extends Entity {
   @Prop()
-  name: string;
+  name: string
 
   @Prop()
-  email: string;
+  email: string
 
   @Prop()
-  password: string;
+  password: string
 
   @Prop()
-  status: UserStatus;
+  status: UserStatus
 }
 
 export enum UserStatus {
@@ -21,4 +21,4 @@ export enum UserStatus {
   Active = 'Active'
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const UserSchema = SchemaFactory.createForClass(User)
