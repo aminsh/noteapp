@@ -2,21 +2,16 @@ import { Alert, Button, Form, Input } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { NavLink } from 'react-router-dom';
 import { translate } from '../../utils'
-import { LoginDTO } from '../../type/dto';
-import { useMutation } from '@apollo/client';
-import { LOGIN } from '../../gql/user';
+import { useAuth } from '../../hook/auth.hook';
 
 export const Login = () => {
-  const [ executeLogin, { loading, error } ] = useMutation(LOGIN);
-
-  const onLogin = (data: LoginDTO) => {
-    return executeLogin({ variables: { userLogin: data } });
-  }
+  const { login } = useAuth()
+  const { error, execute, loading } = login
 
   return (
     <Form
       name='login-form'
-      onFinish={ onLogin }
+      onFinish={ execute }
     >
       {
         error &&

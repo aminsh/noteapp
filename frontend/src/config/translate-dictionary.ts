@@ -6,5 +6,8 @@ export const translateDictionary: any = {
   register: 'Register',
   now: 'Now',
   auth_required_error_message: 'Please input your',
-  login_fail_message: 'Wrong Email or Password !'
+  login_fail_message: 'Wrong Email or Password !',
+  email_is_invalid: 'The email is invalid',
+  name: 'Name',
+  have_an_account: 'Have an account !'
 }

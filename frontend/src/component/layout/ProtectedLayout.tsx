@@ -1,13 +1,26 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useAuth } from '../../hook/auth.hook';
+import { useEffect } from 'react';
+import { Button } from 'antd';
+import { useSelector } from 'react-redux';
 import { User } from '../../type/entity';
-import { setCurrentUser } from '../../store/redux/reducer';
 
 export const ProtectedLayout = () => {
-  const dispatch = useDispatch()
+  const auth = useAuth();
   const { currentUser } = useSelector(state => state) as { currentUser: User }
 
-  const setUser = (e: any) => dispatch(setCurrentUser({ name: e.target.value } as User));
+  useEffect(() => {
+    auth.validate()
+  }, [ currentUser ])
+
   return (
-    <></>
+    <>
+      Protected
+
+      <h1>{ currentUser.name }</h1>
+
+      <Button onClick={ auth.logout }>
+        Logout
+      </Button>
+    </>
   )
 }

@@ -1,9 +1,10 @@
 import { Login } from '../component/user/Login';
+import { Register } from '../component/user/Register';
 
 export const routes = {
   authRoutes: [
     { path: '/login', element: <Login/> },
-    { path: '/signup', element: <a></a> }
+    { path: '/register', element: <Register/> }
   ],
 
   privateRoutes: [

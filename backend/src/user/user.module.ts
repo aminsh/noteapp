@@ -7,6 +7,7 @@ import { UserResolver } from './resolver/user.resolver'
 import { AuthModule } from 'dx-nest-core/auth'
 import { AuthUserSerializationServiceImp } from './service/auth-user-serialization.service'
 import { UserRepository } from './repository/user.repository'
+import { UserAuthenticatedResolver } from './resolver/user-authenticated.resolver';
 
 @Global()
 @Module({
@@ -25,7 +26,8 @@ import { UserRepository } from './repository/user.repository'
   providers: [
     UserRepository,
     UserService,
-    UserResolver
+    UserResolver,
+    UserAuthenticatedResolver
   ],
   controllers: [
     UserController
