@@ -32,6 +32,17 @@ export class NoteResolver {
     return data.map(noteAssembler)
   }
 
+  @Query(() => NoteView, { name: 'NoteById' })
+  async findById(@Args('noteId') _id: string): Promise<NoteView> {
+    const entity = await this.noteModel.findOne({
+      _id
+    })
+      .populate('owner')
+      .populate('attachments')
+      .populate({ path: 'shared', populate: { path: 'user' } })
+    return noteAssembler(entity)
+  }
+
   @Mutation(() => NoteView, { name: 'NoteCreate' })
   async create(@Args('noteCreate') dto: NoteDto): Promise<NoteView> {
     const result = await this.noteService.create(dto)

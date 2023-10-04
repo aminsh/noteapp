@@ -55,6 +55,7 @@ type TokenResponse {
 
 type Query {
   NoteFind: [NoteView!]!
+  NoteById(noteId: String!): NoteView!
   getUsers: [UserView!]!
   UserCurrent: UserView!
 }

@@ -1,5 +1,10 @@
 export const translateDictionary: any = {
+  yes: 'Yes',
+  no: 'No',
+  ok: 'OK',
   or: 'Or',
+  save: 'Save',
+  remove: 'Remove',
   email: 'Email',
   password: 'Password',
   login: 'Log in',
@@ -9,5 +14,11 @@ export const translateDictionary: any = {
   login_fail_message: 'Wrong Email or Password !',
   email_is_invalid: 'The email is invalid',
   name: 'Name',
-  have_an_account: 'Have an account !'
+  have_an_account: 'Have an account !',
+  save_success_message: 'saved successfully',
+  remove_confirmation_message: 'Are you sure to remove',
+  remove_success_message: 'removed successfully',
+  note: 'Note',
+  title: 'Title',
+  content: 'Content'
 }
