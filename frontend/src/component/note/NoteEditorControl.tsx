@@ -1,7 +1,8 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import { FormField } from '../../type/form';
 
-export const NoteEditorControl = ({ value, onChange }: { value?: string, onChange?: (value: string) => void }) => {
+export const NoteEditorControl = ({ value, onChange }: FormField<string>) => {
   return (
     <CKEditor
       editor={ ClassicEditor }

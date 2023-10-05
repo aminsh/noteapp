@@ -1,6 +1,6 @@
 import { Login } from '../component/user/Login';
 import { Register } from '../component/user/Register';
-import { EditNote } from '../component/note/EditNote';
+import { NoteEntry } from '../component/note/NoteEntry';
 
 export const routes = {
   authRoutes: [
@@ -10,7 +10,7 @@ export const routes = {
 
   privateRoutes: [
     { path: '/', element: <a></a> },
-    { path: '/notes/new', element: <EditNote/> },
-    { path: '/notes/:id/edit', element: <EditNote/> }
+    { path: '/notes/new', element: <NoteEntry/> },
+    { path: '/notes/:id/edit', element: <NoteEntry/> }
   ]
 }
