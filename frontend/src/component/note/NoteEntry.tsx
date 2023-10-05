@@ -6,12 +6,13 @@ import { Button, Card, Form, Input, Space, Spin } from 'antd'
 import { useEffect } from 'react'
 import { DeleteOutlined, SaveFilled } from '@ant-design/icons';
 import { useNoteList } from '../../hook/note-list.hook';
-import { notify, translate, confirm } from '../../utils';
+import { confirm, notify, translate } from '../../utils';
 import { NoteEditorControl } from './NoteEditorControl';
+import { NoteAttachments } from './NoteAttachments';
 
 const { useForm } = Form
 
-export const EditNote = () => {
+export const NoteEntry = () => {
   const [ form ] = useForm<Note | undefined>()
   const { id } = useParams<{ id: string }>()
   const { fetch: noteListRefresh } = useNoteList()
@@ -30,7 +31,8 @@ export const EditNote = () => {
     if (!id) {
       form.setFieldsValue({
         title: '',
-        content: ''
+        content: '',
+        attachments: []
       })
 
       return
@@ -41,7 +43,11 @@ export const EditNote = () => {
   }
 
   const save = async () => {
-    const dto = form.getFieldsValue()
+    const data = form.getFieldsValue()
+    const dto = {
+      ...data,
+      attachments: data?.attachments.map(e => e.id)
+    }
 
     if (id)
       await update({
@@ -89,7 +95,7 @@ export const EditNote = () => {
   return (
     <Form form={ form } layout='vertical'>
       <Spin spinning={ loading }>
-        <Card className='max-height'>
+        <Card>
           <Form.Item>
             <Space>
               <Button
@@ -101,15 +107,25 @@ export const EditNote = () => {
                 { translate('save') }
               </Button>
 
-              <Button
-                onClick={ remove }
-                type='default'
-                danger
-                icon={ <DeleteOutlined/> }
-                loading={ removing }
-              >
-                { translate('remove') }
-              </Button>
+              {
+                id
+                  ? <Button
+                    onClick={ remove }
+                    type='default'
+                    danger
+                    icon={ <DeleteOutlined/> }
+                    loading={ removing }
+                  >
+                    { translate('remove') }
+                  </Button>
+
+                  : <Button
+                    onClick={ () => navigate('/') }
+                    type='default'
+                  >
+                    { translate('cancel') }
+                  </Button>
+              }
             </Space>
           </Form.Item>
 
@@ -124,6 +140,12 @@ export const EditNote = () => {
             name='content'
           >
             <NoteEditorControl/>
+          </Form.Item>
+
+          <Form.Item
+            name='attachments'
+          >
+            <NoteAttachments/>
           </Form.Item>
         </Card>
       </Spin>

@@ -7,8 +7,9 @@ import { FilterQuery, Model, ProjectionType } from 'mongoose'
 export class FileRepository {
   constructor(@InjectModel(File.name) private fileModel: Model<File>) {}
 
-  createMany(entities: File[]): Promise<File[]> {
-    return this.fileModel.insertMany(entities.map(entity => new this.fileModel(entity)))
+  create(entity: File): Promise<File> {
+    const data = new this.fileModel(entity)
+    return data.save()
   }
 
   find(filter: FilterQuery<File>, projection?: ProjectionType<File>): Promise<File[]> {

@@ -15,6 +15,13 @@ export const GET_NOTE_BY_ID = gql`
         id
         title
         content
+        attachments {
+          id
+          filename
+          originalName
+          size
+          mimeType
+        }
       }
     }
 `

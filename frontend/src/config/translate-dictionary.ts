@@ -4,6 +4,7 @@ export const translateDictionary: any = {
   ok: 'OK',
   or: 'Or',
   save: 'Save',
+  cancel: 'Cancel',
   remove: 'Remove',
   email: 'Email',
   password: 'Password',
@@ -20,5 +21,6 @@ export const translateDictionary: any = {
   remove_success_message: 'removed successfully',
   note: 'Note',
   title: 'Title',
-  content: 'Content'
+  content: 'Content',
+  upload:'Upload'
 }

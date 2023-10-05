@@ -10,6 +10,7 @@ export interface Note {
   id: string
   title: string
   content: string
+  attachments: File[]
 }
 
 export interface NoteMenuItem {
@@ -19,4 +20,13 @@ export interface NoteMenuItem {
 
 export interface NoteState {
   noteMenuItems: NoteMenuItem[]
+}
+
+export interface File {
+  id: string
+  createdBy: User
+  filename: string
+  originalName: string
+  mimeType: string
+  size: number
 }

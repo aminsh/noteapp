@@ -13,10 +13,12 @@ import { NoteShareDTO } from '../dto/note-shared.dto'
 
 @Injectable({ scope: Scope.REQUEST })
 export class NoteService {
-  constructor(private noteRepository: NoteRepository,
-              private userRepository: UserRepository,
-              private requestContext: RequestContext,
-              private fileRepository: FileRepository) {}
+  constructor(
+    private noteRepository: NoteRepository,
+    private userRepository: UserRepository,
+    private requestContext: RequestContext,
+    private fileRepository: FileRepository
+  ) {}
 
   async create(dto: NoteDto): Promise<Note> {
     const entity = new Note()
@@ -81,8 +83,10 @@ export class NoteService {
   }
 
   private async resolveFiles(filesDto: string[], entity: Note): Promise<void> {
-    if (!filesDto?.length)
+    if (!filesDto?.length) {
+      entity.attachments = []
       return
+    }
 
     const files: File[] = await this.fileRepository.find({
       _id: {
@@ -106,7 +110,7 @@ export class NoteService {
       .from(entity.shared)
       .firstOrDefault(e => e.user._id.toString() === currentUserId)
 
-    if(!(sharedRecordRelatedToEditorUser && sharedRecordRelatedToEditorUser.access === NoteAccess.AllowEdit))
+    if (!(sharedRecordRelatedToEditorUser && sharedRecordRelatedToEditorUser.access === NoteAccess.AllowEdit))
       throw new BadRequestException(NOTE_MESSAGE.THE_CURRENT_USER_IS_NOT_ALLOWED_TO_EDIT_THE_NOTE)
   }
 }
