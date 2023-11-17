@@ -18,7 +18,7 @@ export const ProtectedLayout = () => {
 
   return (
     <Layout className='bg-white'>
-      <Sider width={ 250 } className='bg-white'>
+      <Sider width={ 400 } className='bg-white'>
         <NotesMenu/>
       </Sider>
       <Layout>
