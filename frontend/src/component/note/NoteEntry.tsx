@@ -4,11 +4,11 @@ import { Note } from '../../type/entity'
 import { CREATE_NOTE, GET_NOTE_BY_ID, REMOVE_NOTE, UPDATE_NOTE } from '../../gql/note'
 import { Button, Card, Form, Input, Space, Spin } from 'antd'
 import { useEffect } from 'react'
-import { DeleteOutlined, SaveFilled } from '@ant-design/icons';
-import { useNoteList } from '../../hook/note-list.hook';
-import { confirm, notify, translate } from '../../utils';
-import { NoteEditorControl } from './NoteEditorControl';
-import { NoteAttachments } from './NoteAttachments';
+import { DeleteOutlined, SaveFilled } from '@ant-design/icons'
+import { useNoteList } from '../../hook/note-list.hook'
+import { confirm, notify, translate } from '../../utils'
+import { NoteEditorControl } from './NoteEditorControl'
+import { NoteAttachments } from './NoteAttachments'
 
 const { useForm } = Form
 
@@ -46,7 +46,7 @@ export const NoteEntry = () => {
     const data = form.getFieldsValue()
     const dto = {
       ...data,
-      attachments: data?.attachments.map(e => e.id)
+      attachments: data?.attachments.map(e => e.id),
     }
 
     if (id)

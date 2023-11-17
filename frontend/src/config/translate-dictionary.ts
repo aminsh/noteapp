@@ -8,6 +8,7 @@ export const translateDictionary: any = {
   remove: 'Remove',
   email: 'Email',
   password: 'Password',
+  user: 'User',
   login: 'Log in',
   register: 'Register',
   now: 'Now',
@@ -20,7 +21,11 @@ export const translateDictionary: any = {
   remove_confirmation_message: 'Are you sure to remove',
   remove_success_message: 'removed successfully',
   note: 'Note',
+  notes: 'Notes',
   title: 'Title',
   content: 'Content',
-  upload:'Upload'
+  upload:'Upload',
+  share: 'Share',
+  access: 'Access',
+  shared_with_me: 'Shared with me'
 }

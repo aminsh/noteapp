@@ -55,7 +55,10 @@ type TokenResponse {
 
 type Query {
   NoteFind: [NoteView!]!
+  SharedNoteFind: [NoteView!]!
   NoteById(noteId: String!): NoteView!
+  UsersFindById(ids: [String!]!): [UserView!]!
+  UsersSearch(term: String!, take: Int!): [UserView!]!
   getUsers: [UserView!]!
   UserCurrent: UserView!
 }
@@ -74,6 +77,7 @@ input NoteDto {
   title: String!
   content: String!
   attachments: [String!]
+  shared: [String!]
 }
 
 """Represents NULL values"""

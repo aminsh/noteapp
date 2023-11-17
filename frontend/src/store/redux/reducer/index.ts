@@ -1,10 +1,10 @@
 import { combineReducers } from '@reduxjs/toolkit'
 import { currentUserReducer } from './currentUser'
-import { noteListReducer } from './noteList';
+import { noteListReducer } from './noteList'
 
 export const combinedReducer = combineReducers({
   currentUser: currentUserReducer,
-  noteList: noteListReducer
+  noteList: noteListReducer,
 })
 
 export { setCurrentUser } from './currentUser'

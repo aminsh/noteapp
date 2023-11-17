@@ -2,7 +2,8 @@ import { NoteState } from '../../../type/entity'
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState: NoteState = {
-  noteMenuItems: []
+  myNotes: [],
+  sharedNotes: []
 }
 
 const noteListSlice = createSlice({
@@ -10,7 +11,8 @@ const noteListSlice = createSlice({
   initialState,
   reducers: {
     setNotes: (state: NoteState, { payload }: { payload: NoteState }) => {
-      state.noteMenuItems = payload.noteMenuItems
+      state.myNotes = payload.myNotes
+      state.sharedNotes = payload.sharedNotes
     }
   }
 })

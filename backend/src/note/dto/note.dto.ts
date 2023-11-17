@@ -16,4 +16,10 @@ export class NoteDto {
   @IsArray()
   @IsOptional()
   attachments?: string[]
+
+  @Field(() => [ String ], { nullable: true })
+  @IsString({ each: true })
+  @IsArray()
+  @IsOptional()
+  shared?: string[]
 }

@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UserView } from '../dto/user.view'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
@@ -10,12 +10,17 @@ import { UpdateUserDTO } from '../dto/update-user.dto'
 import { VoidResolver } from 'graphql-scalars'
 import { TokenResponse } from '../dto/token-response'
 import { LoginDTO } from '../dto/login.dto'
+import { userAssembler } from '../dto/user-assembler';
+import { UseGuards } from '@nestjs/common';
+import { JwtGqlAuthenticationGuard } from 'dx-nest-core/auth';
+import { RequestContext } from '../../shared/service/request-context';
 
 @Resolver(() => UserView)
 export class UserResolver {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-    private userService: UserService
+    private userService: UserService,
+    private requestContext: RequestContext
   ) {}
 
   @Mutation(() => IdentityResponse)
@@ -34,5 +39,40 @@ export class UserResolver {
     @Args('userId') id: string,
     @Args('updateUser') dto: UpdateUserDTO): Promise<void> {
     return this.userService.update(id, dto)
+  }
+
+  @Query(() => [ UserView ], { name: 'UsersFindById' })
+  async findManyById(
+    @Args({ name: 'ids', type: () => [ String ] }) ids: string[]
+  ): Promise<UserView[]> {
+    const data = await this.userModel.find({
+      _id: {
+        $in: ids
+      }
+    })
+
+    return data.map(userAssembler)
+  }
+
+  @UseGuards(JwtGqlAuthenticationGuard)
+  @Query(() => [ UserView ], { name: 'UsersSearch' })
+  async search(
+    @Args('term') term: string,
+    @Args({ name: 'take', type: () => Int }) take: number
+  ): Promise<UserView[]> {
+    const data = await this.userModel.find({
+      $or: [
+        {
+          name: { $regex: term, $options: 'i' }
+        },
+        {
+          email: { $regex: term, $options: 'i' }
+        }
+      ],
+      _id: { $ne: this.requestContext.authenticatedUser.id }
+    })
+      .limit(take)
+
+    return data.map(userAssembler)
   }
 }

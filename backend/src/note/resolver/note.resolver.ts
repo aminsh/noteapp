@@ -32,6 +32,21 @@ export class NoteResolver {
     return data.map(noteAssembler)
   }
 
+  @Query(() => [ NoteView ], { name: 'SharedNoteFind' })
+  async sharedNoteFind(): Promise<NoteView[]> {
+    const data = await this.noteModel.find({
+      shared: {
+        $elemMatch: {
+          user: this.requestContext.authenticatedUser.id
+        }
+      }
+    })
+      .populate('owner')
+      .populate('attachments')
+      .populate({ path: 'shared', populate: { path: 'user' } })
+    return data.map(noteAssembler)
+  }
+
   @Query(() => NoteView, { name: 'NoteById' })
   async findById(@Args('noteId') _id: string): Promise<NoteView> {
     const entity = await this.noteModel.findOne({

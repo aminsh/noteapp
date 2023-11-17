@@ -11,6 +11,7 @@ export interface Note {
   title: string
   content: string
   attachments: File[]
+  shared: NoteShare[]
 }
 
 export interface NoteMenuItem {
@@ -19,7 +20,13 @@ export interface NoteMenuItem {
 }
 
 export interface NoteState {
-  noteMenuItems: NoteMenuItem[]
+  myNotes: Note[]
+  sharedNotes: Note[]
+}
+
+export interface NoteShare {
+  user: User
+  access: NoteAccess
 }
 
 export interface File {
@@ -29,4 +36,9 @@ export interface File {
   originalName: string
   mimeType: string
   size: number
+}
+
+export enum NoteAccess {
+  ViewOnly = 'ViewOnly',
+  AllowEdit = 'AllowEdit'
 }
