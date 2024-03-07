@@ -38,7 +38,7 @@ export const Register = () => {
       >
         <Input
           size='large'
-          placeholder={ translate('email') }
+          placeholder={ translate('name') }
         />
       </Form.Item>
 
