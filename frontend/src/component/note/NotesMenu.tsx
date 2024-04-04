@@ -9,9 +9,9 @@ import { translate } from '../../utils'
 import { NoteShareDialog } from './NoteShareDialog'
 
 export const NotesMenu = () => {
-  const [ noteId, setNoteId ] = useState<string>()
-  const { fetch, loading } = useNoteList()
-  const { noteList } = useSelector(state => state) as { noteList: NoteState }
+  const [noteId, setNoteId] = useState<string>()
+  const {fetch, loading} = useNoteList()
+  const {noteList} = useSelector(state => state) as { noteList: NoteState }
   const navigate = useNavigate()
 
   const menus: CollapseProps['items'] = [
@@ -19,42 +19,40 @@ export const NotesMenu = () => {
       key: 'myNotes',
       label: translate('my', 'notes'),
       children: <List<Note>
-        size='small'
-        dataSource={ noteList.myNotes }
-        renderItem={ item => (
-          <List.Item key={ item.id } actions={ [
+        size="small"
+        dataSource={noteList.myNotes}
+        renderItem={item => (
+          <List.Item key={item.id} actions={[
             <Button
-              type='text'
-              shape='circle'
-              icon={ <UserAddOutlined/> }
-              onClick={ () => setNoteId(item.id) }
+              type="text"
+              shape="circle"
+              icon={<UserAddOutlined/>}
+              onClick={() => setNoteId(item.id)}
             />,
 
             <Button
-              type='text'
-              shape='circle'
-              icon={ <EditOutlined/> }
-              onClick={ () => navigate(`/notes/${ item.id }/edit`) }
+              type="text"
+              shape="circle"
+              icon={<EditOutlined/>}
+              onClick={() => navigate(`/notes/${item.id}/edit`)}
             />,
-          ] }>
-            { item.title }
+          ]}>
+            {item.title}
           </List.Item>
-        ) }
+        )}
       />,
     },
     {
       key: 'sharedWithMe',
       label: translate('shared_with_me'),
       children: <List<Note>
-        size='small'
-        dataSource={ noteList.sharedNotes }
-        renderItem={ item => (
-          <List.Item key={ item.id } actions={ [
-
-          ] }>
-            { item.title }
+        size="small"
+        dataSource={noteList.sharedNotes}
+        renderItem={item => (
+          <List.Item key={item.id} actions={[]}>
+            {item.title}
           </List.Item>
-        ) }
+        )}
       />,
     },
   ]
@@ -65,27 +63,29 @@ export const NotesMenu = () => {
   }, [])
 
   return (
-    <Spin spinning={ loading }>
-      <div className='p-2'>
-        <Tooltip title='New'>
-          <Link to={ '/notes/new' }>
+    <Spin spinning={loading}>
+      <div className="p-2">
+        <Tooltip title="New">
+          <Link to={'/notes/new'}>
             <Button
-              icon={ <PlusOutlined/> }
+              icon={<PlusOutlined/>}
             />
           </Link>
         </Tooltip>
       </div>
 
       <Collapse
-        bordered={ false }
-        style={ { background: 'transparent' } }
-        items={ menus }
-        defaultActiveKey={ [ 'myNotes' ] }
+        bordered={false}
+        style={{background: 'transparent'}}
+        items={menus}
+        defaultActiveKey={['myNotes']}
       />
 
       <NoteShareDialog
-        onClose={ () => setNoteId(undefined) }
-        noteId={ noteId }
+        onClose={() => setNoteId(undefined)}
+        noteId={noteId}
+        onChange={() => {
+        }}
       />
     </Spin>
   )

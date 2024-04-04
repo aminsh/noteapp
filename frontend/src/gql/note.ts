@@ -3,13 +3,48 @@ import { gql } from '@apollo/client';
 export const GET_ALL_NOTES = gql`
     query GetAllNote {
         NoteFind {
+            updatedAt,
             id
             title
+            attachments {
+                id
+            }
+            shared {
+                user {
+                    name
+                }
+            }
         }
 
         SharedNoteFind {
+            updatedAt,
             id
             title
+            attachments {
+                id
+            }
+            shared {
+                user {
+                    name
+                }
+            }
+        }
+    }
+`
+
+export const GET_MY_NOTES = gql`
+    query GetMyNotes {
+        NoteFind {
+            id
+            title
+            shared {
+                user {
+                    name
+                }
+            }
+            attachments {
+                id
+            }
         }
     }
 `

@@ -5,8 +5,9 @@ import { Layout } from 'antd'
 import { useSelector } from 'react-redux'
 import { User } from '../../type/entity'
 import { NotesMenu } from '../note/NotesMenu';
+import { MainMenu } from './MainMenu'
 
-const { Sider, Content } = Layout
+const { Sider, Content, Header } = Layout
 
 export const ProtectedLayout = () => {
   const auth = useAuth();
@@ -18,13 +19,10 @@ export const ProtectedLayout = () => {
 
   return (
     <Layout className='bg-white'>
-      <Sider width={ 400 } className='bg-white'>
-        <NotesMenu/>
-      </Sider>
+      <Header style={{background: 'transparent'}}>
+        <MainMenu/>
+      </Header>
       <Layout>
-        <div>
-
-        </div>
         <Content>
           <Outlet/>
         </Content>
