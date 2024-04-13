@@ -1,6 +1,6 @@
 import { Injectable, Scope } from '@nestjs/common'
 import { FileRepository } from '../repository/file.repository'
-import { RequestContext } from './request-context'
+import { NpRequestContext } from './np-request-context.service'
 import { File } from '../schema/file'
 import { UserRepository } from '../../user/repository/user.repository'
 
@@ -9,7 +9,7 @@ export class FileService {
   constructor(
     private fileRepository: FileRepository,
     private userRepository: UserRepository,
-    private requestContext: RequestContext
+    private requestContext: NpRequestContext
   ) {}
 
   async create(file: Express.Multer.File): Promise<File> {

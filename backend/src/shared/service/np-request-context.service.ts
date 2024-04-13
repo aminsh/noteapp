@@ -3,13 +3,20 @@ import { REQUEST } from '@nestjs/core'
 import { AuthenticatedUser } from '../../user/user.type'
 
 @Injectable()
-export class RequestContext {
-  constructor(@Inject(REQUEST) private request: any) {}
+export class NpRequestContext {
+  constructor(
+    @Inject(REQUEST) private request: any
+  ) {
+  }
 
   private get _request() {
-    return this.request.hasOwnProperty('req')
-      ? this.request['req']
-      : this.request
+    if (this.request.hasOwnProperty('req'))
+      return this.request['req']
+
+    if (this.request.hasOwnProperty('data'))
+      return this.request['data']['headers']
+
+    return this.request
   }
 
   get authenticatedUser(): AuthenticatedUser {

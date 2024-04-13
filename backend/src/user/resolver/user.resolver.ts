@@ -13,14 +13,14 @@ import { LoginDTO } from '../dto/login.dto'
 import { userAssembler } from '../dto/user-assembler';
 import { UseGuards } from '@nestjs/common';
 import { JwtGqlAuthenticationGuard } from 'dx-nest-core/auth';
-import { RequestContext } from '../../shared/service/request-context';
+import { NpRequestContext } from '../../shared/service/np-request-context.service';
 
 @Resolver(() => UserView)
 export class UserResolver {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private userService: UserService,
-    private requestContext: RequestContext
+    private requestContext: NpRequestContext
   ) {}
 
   @Mutation(() => IdentityResponse)

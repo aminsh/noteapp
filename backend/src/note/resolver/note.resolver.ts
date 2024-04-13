@@ -6,20 +6,24 @@ import { NoteView } from '../dto/note.view'
 import { NoteService } from '../service/note.service'
 import { NoteDto } from '../dto/note.dto'
 import { VoidResolver } from 'graphql-scalars'
-import { UseGuards } from '@nestjs/common'
+import { Req, UseGuards } from '@nestjs/common'
 import { JwtGqlAuthenticationGuard } from 'dx-nest-core/auth'
 import { noteAssembler } from '../dto/note-assembler'
-import { RequestContext } from '../../shared/service/request-context'
+import { NpRequestContext } from '../../shared/service/np-request-context.service'
 import { NoteShareDTO } from '../dto/note-shared.dto'
+import { AuthenticatedUser } from '../../user/user.type'
 
 @UseGuards(JwtGqlAuthenticationGuard)
 @Resolver(() => NoteView)
 export class NoteResolver {
-  constructor(@InjectModel(Note.name) private noteModel: Model<Note>,
-              private noteService: NoteService,
-              private requestContext: RequestContext) {}
+  constructor(
+    @InjectModel(Note.name) private noteModel: Model<Note>,
+    private noteService: NoteService,
+    private requestContext: NpRequestContext
+  ) {
+  }
 
-  @Query(() => [ NoteView ], { name: 'NoteFind' })
+  @Query(() => [NoteView], {name: 'NoteFind'})
   async find(): Promise<NoteView[]> {
     const data = await this.noteModel.find({
       owner: {
@@ -28,11 +32,11 @@ export class NoteResolver {
     })
       .populate('owner')
       .populate('attachments')
-      .populate({ path: 'shared', populate: { path: 'user' } })
+      .populate({path: 'shared', populate: {path: 'user'}})
     return data.map(noteAssembler)
   }
 
-  @Query(() => [ NoteView ], { name: 'SharedNoteFind' })
+  @Query(() => [NoteView], {name: 'SharedNoteFind'})
   async sharedNoteFind(): Promise<NoteView[]> {
     const data = await this.noteModel.find({
       shared: {
@@ -43,22 +47,22 @@ export class NoteResolver {
     })
       .populate('owner')
       .populate('attachments')
-      .populate({ path: 'shared', populate: { path: 'user' } })
+      .populate({path: 'shared', populate: {path: 'user'}})
     return data.map(noteAssembler)
   }
 
-  @Query(() => NoteView, { name: 'NoteById' })
+  @Query(() => NoteView, {name: 'NoteById'})
   async findById(@Args('noteId') _id: string): Promise<NoteView> {
     const entity = await this.noteModel.findOne({
       _id
     })
       .populate('owner')
       .populate('attachments')
-      .populate({ path: 'shared', populate: { path: 'user' } })
+      .populate({path: 'shared', populate: {path: 'user'}})
     return noteAssembler(entity)
   }
 
-  @Mutation(() => NoteView, { name: 'NoteCreate' })
+  @Mutation(() => NoteView, {name: 'NoteCreate'})
   async create(@Args('noteCreate') dto: NoteDto): Promise<NoteView> {
     const result = await this.noteService.create(dto)
     return noteAssembler(result)
@@ -70,7 +74,7 @@ export class NoteResolver {
   })
   update(
     @Args('noteId') id: string,
-    @Args('noteUpdate') dto: NoteDto
+    @Args('noteUpdate') dto: NoteDto,
   ): Promise<void> {
     return this.noteService.update(id, dto)
   }
@@ -89,7 +93,7 @@ export class NoteResolver {
   })
   share(
     @Args('noteId') id: string,
-    @Args({ name: 'noteShare', type: () => [ NoteShareDTO ] }) dto: NoteShareDTO[]
+    @Args({name: 'noteShare', type: () => [NoteShareDTO]}) dto: NoteShareDTO[]
   ): Promise<void> {
     return this.noteService.share(id, dto)
   }

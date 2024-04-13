@@ -1,8 +1,8 @@
 import * as path from 'path'
 import { Global, Module } from '@nestjs/common'
-import { RequestContext } from './service/request-context'
+import { NpRequestContext } from './service/np-request-context.service'
 import { MulterModule } from '@nestjs/platform-express'
-import { FILES_ROOT_NAME } from './shared.contacts'
+import { FILES_ROOT_NAME, MESSAGE_SERVICE } from './shared.contacts'
 import { FileService } from './service/file.service'
 import { FileRepository } from './repository/file.repository'
 import { FileController } from './controller/file.controller'
@@ -17,10 +17,10 @@ import { File, FileSchema } from './schema/file'
     }),
     MongooseModule.forFeature([
       { name: File.name, schema: FileSchema }
-    ])
+    ]),
   ],
   providers: [
-    RequestContext,
+    NpRequestContext,
     FileService,
     FileRepository
   ],
@@ -28,8 +28,8 @@ import { File, FileSchema } from './schema/file'
     FileController
   ],
   exports: [
-    RequestContext,
-    FileRepository
+    NpRequestContext,
+    FileRepository,
   ]
 })
 export class SharedModule {

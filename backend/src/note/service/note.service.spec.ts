@@ -9,7 +9,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common'
 import { UserRepository } from '../../user/repository/user.repository'
 import { AuthenticatedUser } from '../../user/user.type'
 import { User } from '../../user/shema/user'
-import { RequestContext } from '../../shared/service/request-context'
+import { NpRequestContext } from '../../shared/service/np-request-context.service'
 import { FileRepository } from '../../shared/repository/file.repository'
 import { File } from '../../shared/schema/file'
 import { NOTE_MESSAGE } from '../note.constants'
@@ -50,7 +50,7 @@ describe('Note Service test', () => {
           useValue: Model
         },
         {
-          provide: RequestContext,
+          provide: NpRequestContext,
           useValue: { authenticatedUser }
         }
       ]
