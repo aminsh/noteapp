@@ -11,6 +11,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { VoidResolver } from 'graphql-scalars'
 import { SharedModule } from './shared/shared.module'
 import { EventModule } from './event/event.module'
+import { ClientsModule, Transport } from '@nestjs/microservices'
+import { MESSAGE_SERVICE } from './shared/shared.contacts'
 
 @Module({
   imports: [
@@ -27,6 +29,9 @@ import { EventModule } from './event/event.module'
         Void: VoidResolver
       }
     }),
+    ClientsModule.register([
+      {name: MESSAGE_SERVICE, transport: Transport.TCP},
+    ]),
     EventModule,
     SharedModule,
     NoteModule,

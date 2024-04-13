@@ -1,23 +1,26 @@
 import * as Enumerable from 'linq'
 import { Note } from '../schema/note'
 import { NoteDto } from '../dto/note.dto'
-import { BadRequestException, Injectable, NotFoundException, Scope } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { NoteRepository } from '../repository/note.repository'
 import { UserRepository } from '../../user/repository/user.repository'
-import { RequestContext } from '../../shared/service/request-context'
 import { FileRepository } from '../../shared/repository/file.repository'
 import { File } from '../../shared/schema/file'
-import { NOTE_MESSAGE } from '../note.constants'
+import { NOTE_MESSAGE, NoteChangeEvent } from '../note.constants'
 import { NoteAccess, NoteShared } from '../schema/note-shared'
 import { NoteShareDTO } from '../dto/note-shared.dto'
+import { NpRequestContext } from '../../shared/service/np-request-context.service'
+import { MESSAGE_SERVICE } from '../../shared/shared.contacts'
+import { MessageService } from '../../shared/type/message'
 
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
 export class NoteService {
   constructor(
     private noteRepository: NoteRepository,
     private userRepository: UserRepository,
-    private requestContext: RequestContext,
-    private fileRepository: FileRepository
+    private fileRepository: FileRepository,
+    private requestContext: NpRequestContext,
+    @Inject(MESSAGE_SERVICE) private message: MessageService,
   ) {}
 
   async create(dto: NoteDto): Promise<Note> {
@@ -45,6 +48,13 @@ export class NoteService {
     await this.resolveFiles(dto.attachments, entity)
 
     await this.noteRepository.update(entity)
+
+    this.message.emit(NoteChangeEvent, {
+      headers: {user: this.requestContext.authenticatedUser},
+      body: {
+        id: entity._id,
+      },
+    })
   }
 
   async remove(_id: string): Promise<void> {

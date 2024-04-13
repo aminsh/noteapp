@@ -4,3 +4,8 @@ export enum NOTE_MESSAGE {
   ONE_OR_MORE_USERS_ARE_INVALID = 'one or more users are invalid',
   THE_CURRENT_USER_IS_NOT_ALLOWED_TO_EDIT_THE_NOTE = 'the current user is not allowed to edit the note'
 }
+
+export const NoteCreateRequest = 'noteCreateRequest'
+export const NoteUpdateRequest = 'noteUpdateRequest'
+export const NoteRemoveRequest = 'noteRemoveRequest'
+export const NoteChangeEvent = 'noteChangeEvent'
