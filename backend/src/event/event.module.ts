@@ -5,6 +5,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices'
 import { MESSAGE_SERVICE } from '../shared/shared.contacts'
 import { NoteModule } from '../note/note.module'
 import { SubjectService } from './service/subject.service'
+import { ConnectedUsersService } from './service/connected-users.service'
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SubjectService } from './service/subject.service'
   providers: [
     MainGateway,
     SubjectService,
+    ConnectedUsersService,
   ],
 })
 export class EventModule {

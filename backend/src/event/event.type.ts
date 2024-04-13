@@ -10,3 +10,8 @@ export interface NotifyTo {
   body: any
   to: UserView[]
 }
+
+export interface ConnectedUser {
+  userId: string
+  clientIds: string[]
+}
