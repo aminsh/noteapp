@@ -7,7 +7,7 @@ import { UserResolver } from './resolver/user.resolver'
 import { AuthModule } from 'dx-nest-core/auth'
 import { AuthUserSerializationServiceImp } from './service/auth-user-serialization.service'
 import { UserRepository } from './repository/user.repository'
-import { UserAuthenticatedResolver } from './resolver/user-authenticated.resolver';
+import { UserAuthenticatedResolver } from './resolver/user-authenticated.resolver'
 import { JwtModule } from '@nestjs/jwt'
 
 @Global()
