@@ -8,6 +8,7 @@ import { AuthModule } from 'dx-nest-core/auth'
 import { AuthUserSerializationServiceImp } from './service/auth-user-serialization.service'
 import { UserRepository } from './repository/user.repository'
 import { UserAuthenticatedResolver } from './resolver/user-authenticated.resolver';
+import { JwtModule } from '@nestjs/jwt'
 
 @Global()
 @Module({
@@ -22,6 +23,10 @@ import { UserAuthenticatedResolver } from './resolver/user-authenticated.resolve
       },
       userSerializationService: AuthUserSerializationServiceImp
     }),
+    JwtModule.register({
+      secret: 'P@ssw0rd',
+      signOptions: { expiresIn: '72h' },
+    })
   ],
   providers: [
     UserRepository,
@@ -33,7 +38,8 @@ import { UserAuthenticatedResolver } from './resolver/user-authenticated.resolve
     UserController
   ],
   exports: [
-    UserRepository
+    UserRepository,
+    UserService,
   ]
 })
 export class UserModule {

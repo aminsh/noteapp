@@ -7,19 +7,22 @@ import { JWT_TOKEN_GENERATOR_SERVICE, JWTAccessToken, JwtTokenGeneratorService }
 import { UserRepository } from '../repository/user.repository'
 import { UpdateUserDTO } from '../dto/update-user.dto'
 import { LoginDTO } from '../dto/login.dto'
+import { JwtService } from '@nestjs/jwt'
 
 @Injectable()
 export class UserService {
   constructor(
     private userRepository: UserRepository,
-    @Inject(JWT_TOKEN_GENERATOR_SERVICE) private jwtTokenGeneratorService: JwtTokenGeneratorService
-  ) {}
+    @Inject(JWT_TOKEN_GENERATOR_SERVICE) private jwtTokenGeneratorService: JwtTokenGeneratorService,
+    private jwt: JwtService,
+  ) {
+  }
 
   async create(dto: RegisterDTO): Promise<User> {
     const isDuplicated = await this.userRepository.findOne({
       email: EqualsCaseInsensitive(dto.email),
-      status: { $ne: UserStatus.Pending }
-    }, { _id: true })
+      status: {$ne: UserStatus.Pending}
+    }, {_id: true})
 
     if (isDuplicated)
       throw new BadRequestException(USER_MESSAGE.THE_EMAIL_IS_DUPLICATED)
@@ -34,7 +37,7 @@ export class UserService {
   }
 
   async update(id: string, dto: UpdateUserDTO): Promise<void> {
-    const entity = await this.userRepository.findOne({ _id: id, status: UserStatus.Active })
+    const entity = await this.userRepository.findOne({_id: id, status: UserStatus.Active})
 
     if (!entity)
       throw new NotFoundException()
@@ -43,7 +46,7 @@ export class UserService {
     await this.userRepository.update(entity)
   }
 
-  async login({ email, password }: LoginDTO): Promise<JWTAccessToken> {
+  async login({email, password}: LoginDTO): Promise<JWTAccessToken> {
     const entity = await this.userRepository.findOne({
       email: email.toLowerCase(),
       password: hash(password),
@@ -54,5 +57,13 @@ export class UserService {
       throw new UnauthorizedException()
 
     return this.jwtTokenGeneratorService.generate({ _id: entity['_id'], email: entity.email })
+  }
+
+  verify(token: string): Partial<User> {
+    const user = this.jwt.verify<User>(token.replace('Bearer', '').trim())
+    return {
+      _id: user._id,
+      email: user.email,
+    }
   }
 }
