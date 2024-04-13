@@ -33,5 +33,7 @@ export const translateDictionary: any = {
   upload:'Upload',
   share: 'Share',
   access: 'Access',
-  shared_with_me: 'Shared with me'
+  shared_with_me: 'Shared with me',
+  syncing: 'Syncing',
+  synced: 'Synced'
 }

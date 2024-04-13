@@ -1,32 +1,44 @@
 import { Outlet } from 'react-router-dom'
 import { useAuth } from '../../hook/auth.hook'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Layout } from 'antd'
-import { useSelector } from 'react-redux'
-import { User } from '../../type/entity'
-import { NotesMenu } from '../note/NotesMenu';
 import { MainMenu } from './MainMenu'
+import { Socket } from 'socket.io-client'
+import { configure } from '../../config/socket-client'
+import { SocketContext } from '../../socket'
 
-const { Sider, Content, Header } = Layout
+const {Content, Header} = Layout
 
 export const ProtectedLayout = () => {
-  const auth = useAuth();
-  const { currentUser } = useSelector(state => state) as { currentUser: User }
+  const auth = useAuth()
+  const [socket, setSocket] = useState<Socket>()
+
+  const startSocket = async () => {
+    const client = configure()
+    setSocket(client)
+  }
 
   useEffect(() => {
     auth.validate()
-  }, [ currentUser ])
+    startSocket()
+
+    return () => {
+      socket?.close()
+    }
+  }, [])
 
   return (
-    <Layout className='bg-white'>
-      <Header style={{background: 'transparent'}}>
-        <MainMenu/>
-      </Header>
-      <Layout>
-        <Content>
-          <Outlet/>
-        </Content>
+    <SocketContext.Provider value={{socket}}>
+      <Layout className='bg-white'>
+        <Header style={{background: 'transparent'}}>
+          <MainMenu/>
+        </Header>
+        <Layout>
+          <Content>
+            <Outlet/>
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </SocketContext.Provider>
   )
 }

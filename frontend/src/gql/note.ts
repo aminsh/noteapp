@@ -6,8 +6,13 @@ export const GET_ALL_NOTES = gql`
             updatedAt,
             id
             title
+            content
             attachments {
                 id
+                filename
+                originalName
+                size
+                mimeType
             }
             shared {
                 user {
@@ -20,8 +25,13 @@ export const GET_ALL_NOTES = gql`
             updatedAt,
             id
             title
+            content
             attachments {
                 id
+                filename
+                originalName
+                size
+                mimeType
             }
             shared {
                 user {
