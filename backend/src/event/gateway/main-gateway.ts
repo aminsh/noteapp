@@ -6,7 +6,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets'
-import { BadRequestException, HttpStatus, Inject, NotFoundException, UseFilters, UseGuards } from '@nestjs/common'
+import { HttpStatus, Inject, UseFilters, UseGuards } from '@nestjs/common'
 import { WsGuard } from '../guard/ws.guard'
 import { Server, Socket } from 'socket.io'
 import { AuthenticatedUser } from '../../user/user.type'
@@ -74,7 +74,7 @@ export class MainGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @UseGuards(WsGuard)
   @SubscribeMessage('request')
-  request({user, ...socket}: Socket & { user: AuthenticatedUser }, payload: WebsocketPayload) {
+  request({user}: Socket & { user: AuthenticatedUser }, payload: WebsocketPayload) {
     if (typeof payload === 'string')
       payload = JSON.parse(payload)
 
