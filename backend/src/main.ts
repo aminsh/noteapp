@@ -4,14 +4,17 @@ import { ValidationPipe } from '@nestjs/common'
 import { join } from 'path'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { MicroserviceOptions, Transport } from '@nestjs/microservices'
+import { TcpExceptionFilter } from './event/filter/tcp-exception.filter'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
   app.enableCors()
 
-  app.connectMicroservice<MicroserviceOptions>({
+  const tcpMicroservice = app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
   })
+
+  tcpMicroservice.useGlobalFilters(new TcpExceptionFilter())
 
   const validations = { whitelist: true, forbidNonWhitelisted: true }
   app.useGlobalPipes(new ValidationPipe(validations))

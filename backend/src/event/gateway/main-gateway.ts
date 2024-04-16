@@ -1,11 +1,12 @@
 import {
-  OnGatewayConnection, OnGatewayDisconnect,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
   OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer
+  WebSocketServer,
 } from '@nestjs/websockets'
-import { Inject, UseGuards } from '@nestjs/common'
+import { BadRequestException, HttpStatus, Inject, NotFoundException, UseFilters, UseGuards } from '@nestjs/common'
 import { WsGuard } from '../guard/ws.guard'
 import { Server, Socket } from 'socket.io'
 import { AuthenticatedUser } from '../../user/user.type'
@@ -15,7 +16,9 @@ import { MessageService } from '../../shared/type/message'
 import { SubjectService } from '../service/subject.service'
 import { ConnectedUsersService } from '../service/connected-users.service'
 import { UserService } from '../../user/service/user.service'
+import { exceptionResponseHandler, WsExceptionFilter } from '../filter/ws-exception.filter'
 
+@UseFilters(new WsExceptionFilter())
 @WebSocketGateway({
   cors: {
     allowedHeaders: '*',
@@ -42,24 +45,31 @@ export class MainGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       const {message, to, body} = value
 
       return Promise.all(
-        to.map(user => this.emit(user, message, body))
+        to.map(user => this.emit(user.id, message, body)),
       )
     })
   }
 
-  @UseGuards(WsGuard)
-  async handleConnection(client: Socket, ...args: any[]) {
+  async handleConnection(client: Socket) {
     const auth = client.handshake.auth
 
     const {token} = auth
-    const user = this.userService.verify(token)
 
-    this.connectedUsers.connect({id: user._id, email: user.email}, client)
+    try {
+      const user = this.userService.verify(token)
 
-    await this.emit({id: user._id, email: user.email}, 'hello', user)
+      this.connectedUsers.connect(user._id, client.id)
+    } catch {
+      exceptionResponseHandler({
+        status: HttpStatus.UNAUTHORIZED,
+        client,
+      })
+      client.disconnect()
+    }
   }
 
   handleDisconnect(client: Socket): any {
+    this.connectedUsers.disconnect(client.id)
   }
 
   @UseGuards(WsGuard)
@@ -74,9 +84,9 @@ export class MainGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     })
   }
 
-  private async emit(user: AuthenticatedUser, message: string, body?: any): Promise<void> {
+  private async emit(userId: string, message: string, body?: any): Promise<void> {
     const allSockets = await this.io.fetchSockets()
-    const socketIds = this.connectedUsers.getAllConnectionsOfUser(user)
+    const socketIds = this.connectedUsers.getUserClients(userId)
     const sockets = allSockets.filter(socket => socketIds.includes(socket.id))
     sockets.forEach(socket => {
       socket.emit(message, body)
