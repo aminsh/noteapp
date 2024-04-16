@@ -1,34 +1,29 @@
 import { Injectable } from '@nestjs/common'
 import { ConnectedUser } from '../event.type'
-import { AuthenticatedUser } from '../../user/user.type'
-import { Socket } from 'socket.io'
 
 @Injectable()
 export class ConnectedUsersService {
   private connectedUsers: ConnectedUser[] = []
 
-  connect(user: AuthenticatedUser, client: Socket) {
-    let item = this.connectedUsers.find(cu => cu.userId === user.id)
+  connect(userId: string ,clientId: string) {
+    const item = this.connectedUsers.find(cu => cu.userId === userId && cu.clientId === clientId)
 
-    if (!item) {
-      item = {userId: user.id, clientIds: []}
-      this.connectedUsers.push(item)
-    }
+    if(item)
+      return
 
-    if (!item.clientIds.includes(client.id))
-      item.clientIds.push(client.id)
+    this.connectedUsers.push({userId, clientId})
   }
 
-  disconnect(user: AuthenticatedUser, client: Socket) {
-    const item = this.connectedUsers.find(cu => cu.userId === user.id)
+  disconnect(clientId: string) {
+    const item = this.connectedUsers.find(cu => cu.clientId === clientId)
 
     if (!item)
       return
 
-    item.clientIds.slice(item.clientIds.indexOf(client.id), 1)
+    this.connectedUsers.splice(this.connectedUsers.indexOf(item), 1)
   }
 
-  getAllConnectionsOfUser(user: AuthenticatedUser): string[] {
-    return (this.connectedUsers.find(cu => cu.userId === user.id) ?? {clientIds: []} as ConnectedUser).clientIds
+  getUserClients(userId: string): string[] {
+    return this.connectedUsers.filter(cu => cu.userId === userId).map(cu => cu.clientId)
   }
 }

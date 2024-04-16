@@ -13,5 +13,5 @@ export interface NotifyTo {
 
 export interface ConnectedUser {
   userId: string
-  clientIds: string[]
+  clientId: string
 }
