@@ -6,12 +6,11 @@ import { NoteView } from '../dto/note.view'
 import { NoteService } from '../service/note.service'
 import { NoteDto } from '../dto/note.dto'
 import { VoidResolver } from 'graphql-scalars'
-import { Req, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { JwtGqlAuthenticationGuard } from 'dx-nest-core/auth'
 import { noteAssembler } from '../dto/note-assembler'
 import { NpRequestContext } from '../../shared/service/np-request-context.service'
 import { NoteShareDTO } from '../dto/note-shared.dto'
-import { AuthenticatedUser } from '../../user/user.type'
 
 @UseGuards(JwtGqlAuthenticationGuard)
 @Resolver(() => NoteView)

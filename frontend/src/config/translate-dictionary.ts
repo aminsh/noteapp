@@ -1,4 +1,4 @@
-export const translateDictionary: any = {
+export const translateDictionary: Record<string, string> = {
   yes: 'Yes',
   no: 'No',
   ok: 'OK',
@@ -35,5 +35,7 @@ export const translateDictionary: any = {
   access: 'Access',
   shared_with_me: 'Shared with me',
   syncing: 'Syncing',
-  synced: 'Synced'
+  synced: 'Synced',
+  file_name: 'File name',
+  mime_type: 'Type',
 }

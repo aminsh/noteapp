@@ -6,6 +6,7 @@ import { MainMenu } from './MainMenu'
 import { Socket } from 'socket.io-client'
 import { configure } from '../../config/socket-client'
 import { SocketContext } from '../../socket'
+import style from './ProtectedLayout.module.scss'
 
 const {Content, Header} = Layout
 
@@ -33,7 +34,7 @@ export const ProtectedLayout = () => {
         <Header style={{background: 'transparent'}}>
           <MainMenu/>
         </Header>
-        <Layout>
+        <Layout className={style.mainLayout}>
           <Content>
             <Outlet/>
           </Content>

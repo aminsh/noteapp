@@ -54,6 +54,7 @@ type TokenResponse {
 }
 
 type Query {
+  FileFind: [FileView!]!
   NoteFind: [NoteView!]!
   SharedNoteFind: [NoteView!]!
   NoteById(noteId: String!): NoteView!
