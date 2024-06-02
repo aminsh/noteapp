@@ -21,6 +21,11 @@ type FileView {
   size: Float!
 }
 
+type FilePageableResponse {
+  count: Int
+  data: [FileView!]!
+}
+
 type NoteSharedView {
   user: UserView
   access: NoteAccess!
@@ -54,7 +59,7 @@ type TokenResponse {
 }
 
 type Query {
-  FileFind: [FileView!]!
+  fileFind(request: FileFindRequest!): FilePageableResponse!
   NoteFind: [NoteView!]!
   SharedNoteFind: [NoteView!]!
   NoteById(noteId: String!): NoteView!
@@ -62,6 +67,12 @@ type Query {
   UsersSearch(term: String!, take: Int!): [UserView!]!
   getUsers: [UserView!]!
   UserCurrent: UserView!
+}
+
+input FileFindRequest {
+  take: Int!
+  skip: Int!
+  search: String
 }
 
 type Mutation {
