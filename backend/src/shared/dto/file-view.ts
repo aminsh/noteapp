@@ -1,12 +1,13 @@
 import { UserView } from '../../user/dto/user.view'
 import { Field, ObjectType } from '@nestjs/graphql'
+import { PageableResponse } from '../type'
 
 @ObjectType()
 export class FileView {
   @Field()
   id: string
 
-  @Field(() => UserView, { nullable: true })
+  @Field(() => UserView, {nullable: true})
   createdBy: UserView
 
   @Field()
@@ -21,3 +22,10 @@ export class FileView {
   @Field()
   size: number
 }
+
+@ObjectType()
+export class FilePageableResponse extends PageableResponse<FileView> {
+  @Field(() => [FileView])
+  data: FileView[]
+}
+
