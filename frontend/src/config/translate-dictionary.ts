@@ -38,4 +38,10 @@ export const translateDictionary: Record<string, string> = {
   synced: 'Synced',
   file_name: 'File name',
   mime_type: 'Type',
+  shared_with: 'Shared with',
+  people: 'People',
+  get_public_link: 'Get public link',
+  add_to_favorite: 'Add a favorite',
+  preview: 'Preview',
+  link_copied: 'Link copied',
 }

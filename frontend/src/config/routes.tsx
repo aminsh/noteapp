@@ -3,6 +3,7 @@ import { Register } from '../component/user/Register';
 import { NoteEntry } from '../component/note/NoteEntry';
 import { Notes } from '../component/note/Notes'
 import { Files } from '../component/File/Files'
+import { NotePublicPreview } from '../component/note/NotePublicPreview'
 
 export const routes = {
   authRoutes: [
@@ -18,4 +19,8 @@ export const routes = {
     {path: '/notes/:id/edit', element: <NoteEntry/>},
     {path: '/files', element: <Files/>}
   ],
+
+  publicRoutes: [
+    {path: '/content/:id', element: <NotePublicPreview/>},
+  ]
 }

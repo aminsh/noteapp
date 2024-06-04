@@ -12,6 +12,8 @@ import { NoteShareDTO } from '../dto/note-shared.dto'
 import { NpRequestContext } from '../../shared/service/np-request-context.service'
 import { MESSAGE_SERVICE } from '../../shared/shared.contacts'
 import { MessageService } from '../../shared/type/message'
+import { NoteTextContent } from '../schema/note-text-content'
+import { NoteImageContent } from '../schema/note-image-content'
 
 @Injectable()
 export class NoteService {
@@ -27,9 +29,16 @@ export class NoteService {
     const entity = new Note()
     entity.owner = await this.userRepository.findOne({ _id: this.requestContext.authenticatedUser.id })
     entity.title = dto.title
-    entity.content = dto.content
-
-    await this.resolveFiles(dto.attachments, entity)
+    /*entity.contents = [
+      {
+        type: NoteTextContent.name,
+        text: dto.content,
+      },
+      {
+        type: NoteImageContent.name,
+        images: await this.resolveFiles(dto.attachments, entity),
+      }
+    ]*/
 
     return this.noteRepository.create(entity)
   }
@@ -43,7 +52,16 @@ export class NoteService {
     this.isUserAllowedToEdit(entity)
 
     entity.title = dto.title
-    entity.content = dto.content
+    /*entity.contents = [
+      {
+        type: NoteTextContent.name,
+        text: dto.content,
+      },
+      {
+        type: NoteImageContent.name,
+        images: await this.resolveFiles(dto.attachments, entity)
+      }
+    ]*/
 
     await this.resolveFiles(dto.attachments, entity)
 
@@ -92,7 +110,7 @@ export class NoteService {
     await this.noteRepository.update(entity)
   }
 
-  private async resolveFiles(filesDto: string[], entity: Note): Promise<void> {
+  private async resolveFiles(filesDto: string[], entity: Note): Promise<File[]> {
     if (!filesDto?.length) {
       entity.attachments = []
       return
@@ -107,7 +125,7 @@ export class NoteService {
     if (files.length !== filesDto.length)
       throw new BadRequestException(NOTE_MESSAGE.FILES_IS_INVALID)
 
-    entity.attachments = files
+    return files
   }
 
   private isUserAllowedToEdit(entity: Note): void {

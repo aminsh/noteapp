@@ -1,14 +1,16 @@
 import { Note, NoteState } from '../../type/entity'
-import { Avatar, Badge, Button, Space, Spin, Table, TableProps, Tooltip } from 'antd'
+import { Avatar, Badge, Button, message, Space, Spin, TableProps, Tooltip } from 'antd'
 import { confirm, dateTimeDisplay, notify, translate } from '../../utils'
 import { useSelector } from 'react-redux'
 import { DeleteOutlined, EditOutlined, PaperClipOutlined, UserOutlined } from '@ant-design/icons'
 import { useNoteList } from '../../hook/note-list.hook'
 import { useLayoutEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
 import { REMOVE_NOTE } from '../../gql/note'
 import { NoteShareDialog } from './NoteShareDialog'
+import { NoteCard } from './NoteCard'
+import { NotePreviewDialog } from './NotePreview'
 
 export const Notes = ({type}: { type: 'MyNotes' | 'SharedNotes' }) => {
   const {fetch, loading} = useNoteList()
@@ -20,6 +22,9 @@ export const Notes = ({type}: { type: 'MyNotes' | 'SharedNotes' }) => {
     : noteList.sharedNotes
   const [idBeingRemoved, setIdBeingRemoved] = useState<string | null>()
   const [idBeingShared, setIdBeingShared] = useState<string | null>()
+  const [showPreview, setShowPreview] = useState(false)
+  const [selectedNote, setSelectedNote] = useState<Note>()
+  const [messageApi,contextHolder] = message.useMessage()
 
   const handleRemove = async (id: string) => {
     const result = await confirm(translate('remove_confirmation_message'))
@@ -47,6 +52,13 @@ export const Notes = ({type}: { type: 'MyNotes' | 'SharedNotes' }) => {
     await fetch()
   }
 
+  const handleGetPublicLink = async (id: string) => {
+    const host = window.location.host
+    const link = `${host}/content/${id}`
+    await navigator.clipboard.writeText(link)
+    messageApi.info(translate('link_copied'))
+  }
+
   const columns: TableProps<Note>['columns'] = [
     {
       title: translate('updated_at'),
@@ -66,19 +78,19 @@ export const Notes = ({type}: { type: 'MyNotes' | 'SharedNotes' }) => {
       render: (_, {id, shared}) => (
         shared.length &&
         <Button
-          onClick={() => setIdBeingShared(id)}
-          shape="circle"
-          type="text">
-          <Avatar.Group maxCount={3}>
-            {shared.map((it, index) =>
-              <Avatar
-                icon={<UserOutlined/>}
-                style={{background: color[index]}}
-              >
-                {it.user.name?.substring(0, 1)}
-              </Avatar>,
-            )}
-          </Avatar.Group>
+            onClick={() => setIdBeingShared(id)}
+            shape="circle"
+            type="text">
+            <Avatar.Group maxCount={3}>
+              {shared.map((it, index) =>
+                <Avatar
+                  icon={<UserOutlined/>}
+                  style={{background: color[index]}}
+                >
+                  {it.user.name?.substring(0, 1)}
+                </Avatar>,
+              )}
+            </Avatar.Group>
         </Button>
       ),
     },
@@ -89,12 +101,12 @@ export const Notes = ({type}: { type: 'MyNotes' | 'SharedNotes' }) => {
       render: (_, {attachments}) => (
         attachments.length &&
         <Badge
-          count={attachments.length}
+            count={attachments.length}
         >
-          <Avatar
-            shape="square"
-            icon={<PaperClipOutlined/>}
-          />
+            <Avatar
+                shape="square"
+                icon={<PaperClipOutlined/>}
+            />
         </Badge>
       ),
     },
@@ -132,10 +144,22 @@ export const Notes = ({type}: { type: 'MyNotes' | 'SharedNotes' }) => {
 
   return (<>
     <Spin spinning={loading}>
-      <Table
-        dataSource={dataSource}
-        columns={columns}
-      />
+      <Space wrap>
+        {dataSource?.map(note => (
+          <NoteCard
+            note={note}
+            share={() => setIdBeingShared(note.id)}
+            remove={() => handleRemove(note.id)}
+            preview={() => {
+              setShowPreview(true)
+              setSelectedNote(note)
+            }}
+            getPublicLink={() => {
+              handleGetPublicLink(note.id)
+            }}
+          />
+        ))}
+      </Space>
     </Spin>
 
     <NoteShareDialog
@@ -143,6 +167,16 @@ export const Notes = ({type}: { type: 'MyNotes' | 'SharedNotes' }) => {
       noteId={idBeingShared}
       onChange={fetch}
     />
+
+    <NotePreviewDialog
+      note={selectedNote}
+      open={showPreview}
+      onClose={() => {
+        setShowPreview(false)
+        setSelectedNote(undefined)
+      }}
+    />
+    {contextHolder}
   </>)
 
 }
