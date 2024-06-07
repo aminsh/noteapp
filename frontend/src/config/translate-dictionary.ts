@@ -38,4 +38,5 @@ export const translateDictionary: Record<string, string> = {
   synced: 'Synced',
   file_name: 'File name',
   mime_type: 'Type',
+  file_manager: 'File Manager',
 }

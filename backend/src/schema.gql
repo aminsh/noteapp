@@ -17,8 +17,18 @@ type FileView {
   createdBy: UserView
   filename: String!
   originalName: String!
+  type: FileType
   mimeType: String!
   size: Float!
+}
+
+enum FileType {
+  JPG
+  PNG
+  XLS
+  PDF
+  DOC
+  TXT
 }
 
 type FilePageableResponse {
@@ -59,7 +69,7 @@ type TokenResponse {
 }
 
 type Query {
-  fileFind(request: FileFindRequest!): FilePageableResponse!
+  filesFind(request: FileFindRequest!): FilePageableResponse!
   NoteFind: [NoteView!]!
   SharedNoteFind: [NoteView!]!
   NoteById(noteId: String!): NoteView!
@@ -73,6 +83,8 @@ input FileFindRequest {
   take: Int!
   skip: Int!
   search: String
+  ids: [String!]
+  notEqualIds: [String!]
 }
 
 type Mutation {

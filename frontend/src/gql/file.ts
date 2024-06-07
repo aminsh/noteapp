@@ -1,12 +1,16 @@
 import { gql } from '@apollo/client'
 
-export const FILE_LIST = gql`
-  query GetFiles {
-    FileFind {
-      id
-      originalName
-      mimeType
-      size
+export const GET_FILES = gql`
+    query GetFiles($request: FileFindRequest!) {
+        filesFind(request: $request) {
+            data {
+                id
+                originalName
+                filename
+                mimeType
+                type
+            }
+            count
+        }
     }
-  }
 `

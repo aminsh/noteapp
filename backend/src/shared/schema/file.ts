@@ -3,7 +3,7 @@ import { Entity } from '../type'
 import { User } from '../../user/shema/user'
 import mongoose from 'mongoose'
 
-@Schema()
+@Schema({ timestamps: true })
 export class File extends Entity {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
   createdBy: User
