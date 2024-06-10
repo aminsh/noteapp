@@ -52,6 +52,11 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type NotePageableResponse {
+  count: Int
+  data: [NoteView!]!
+}
+
 type TokenResponse {
   access_token: String!
   expires_in: String!
@@ -60,9 +65,7 @@ type TokenResponse {
 
 type Query {
   fileFind(request: FileFindRequest!): FilePageableResponse!
-  NoteFind: [NoteView!]!
-  SharedNoteFind: [NoteView!]!
-  NoteById(noteId: String!): NoteView!
+  notesFind(request: NoteFileRequest!): NotePageableResponse!
   UsersFindById(ids: [String!]!): [UserView!]!
   UsersSearch(term: String!, take: Int!): [UserView!]!
   getUsers: [UserView!]!
@@ -75,11 +78,18 @@ input FileFindRequest {
   search: String
 }
 
+input NoteFileRequest {
+  take: Int!
+  skip: Int!
+  search: String
+  id: String
+}
+
 type Mutation {
-  NoteCreate(noteCreate: NoteDto!): NoteView!
-  NoteUpdate(noteId: String!, noteUpdate: NoteDto!): Void
-  NoteRemove(noteId: String!): Void
-  NoteShare(noteId: String!, noteShare: [NoteShareDTO!]!): Void
+  noteCreate(noteCreate: NoteDto!): NoteView!
+  noteUpdate(noteId: String!, noteUpdate: NoteDto!): Void
+  noteRemove(noteId: String!): Void
+  noteShare(noteId: String!, noteShare: [NoteShareDTO!]!): Void
   register(userRegister: RegisterDTO!): IdentityResponse!
   login(userLogin: LoginDTO!): TokenResponse!
   update(userId: String!, updateUser: UpdateUserDTO!): Void
