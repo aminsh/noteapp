@@ -15,9 +15,7 @@ export const NoteList = () => {
   const [page, setPage] = useState<Page>({pageSize: DEFAULT_PAGE_SIZE, page: 1, total: 0})
   const [data, setData] = useState<Note[]>([])
   const [search, setSearch] = useState<string>()
-
-  const [remove, {loading: removing}] = useMutation(NoteRemoveMutationDocument)
-
+  const [remove] = useMutation(NoteRemoveMutationDocument)
   const [idBeingShared, setIdBeingShared] = useState<string | null>()
   const [showPreview, setShowPreview] = useState(false)
   const [selectedNote, setSelectedNote] = useState<Note>()

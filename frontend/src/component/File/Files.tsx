@@ -1,7 +1,7 @@
 import { File } from '../../type/entity'
-import { Button, Row, Spin, Table, TableProps, Tooltip } from 'antd'
+import { Button, Spin, Table, TableProps, Tooltip } from 'antd'
 import { translate } from '../../utils'
-import { useLazyQuery, useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { GET_FILES } from '../../gql/file'
 import React, { useEffect, useState } from 'react'
 import {
@@ -9,11 +9,10 @@ import {
   FileExcelOutlined,
   FileImageOutlined,
   FileJpgOutlined,
-  FilePdfOutlined
+  FilePdfOutlined,
 } from '@ant-design/icons'
 import { PageableRequest, PageableResponse } from '../../type/pagination'
 import { DEFAULT_PAGE_SIZE } from '../../App.constant'
-import { FilesSelector } from './FilesSelector'
 import { FileSelectorDialog } from './FileSelectorDialog'
 
 export const Files = () => {

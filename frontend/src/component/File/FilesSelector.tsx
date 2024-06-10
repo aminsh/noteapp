@@ -5,14 +5,7 @@ import { GET_FILES } from '../../gql/file'
 import React, { useEffect, useState } from 'react'
 import { DEFAULT_PAGE_SIZE } from '../../App.constant'
 import { Button, Checkbox, Image, Input, List, Pagination, Space, Spin, Upload, UploadFile } from 'antd'
-import {
-  FileExcelOutlined,
-  FileImageOutlined,
-  FileJpgOutlined,
-  FilePdfOutlined,
-  SearchOutlined,
-  UploadOutlined
-} from '@ant-design/icons'
+import { FileImageOutlined, FileJpgOutlined, SearchOutlined, UploadOutlined } from '@ant-design/icons'
 import { resolvePathFile, translate } from '../../utils'
 import { useFileUploader } from '../../hook/file-uploader.hook'
 import SvgPdf from '../../asset/pdf.svg'
