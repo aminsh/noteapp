@@ -1,11 +1,11 @@
 import { useDispatch } from 'react-redux'
 import { useLazyQuery } from '@apollo/client'
 import { Note } from '../type/entity'
-import { GET_ALL_NOTES } from '../gql/note'
+import { NotesQueryDocument } from '../gql/note'
 import { setNotes } from '../store/redux/reducer'
 
 export const useNoteList = () => {
-  const [ getNotes, { loading } ] = useLazyQuery<{ NoteFind: Note[], SharedNoteFind: Note[] }>(GET_ALL_NOTES)
+  const [ getNotes, { loading } ] = useLazyQuery<{ NoteFind: Note[], SharedNoteFind: Note[] }>(NotesQueryDocument)
   const dispatch = useDispatch()
 
   const fetch = async () => {

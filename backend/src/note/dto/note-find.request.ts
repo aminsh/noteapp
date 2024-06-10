@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsOptional, IsString } from 'class-validator'
-import { FilterQuery } from 'mongoose'
+import { FilterQuery, ObjectId } from 'mongoose'
 import { Note } from '../schema/note'
 import { PageableRequest } from '../../shared/type'
 
@@ -19,40 +19,47 @@ export class NoteFindRequest extends PageableRequest {
 
 export const handleNoteFindRequest = (request: NoteFindRequest, userId: string): { filter: FilterQuery<Note> } => {
   const filter: FilterQuery<Note> = {
-    $or: [
+    $and: [
       {
-        owner: {
-          _id: userId,
-        },
-        shared: {
-          $elemMatch: {
-            user: userId,
+        $or: [
+          {
+            owner: userId,
           },
-        },
+          {
+            shared: {
+              $elemMatch: {
+                user: userId,
+              },
+            },
+          }
+        ],
       },
     ],
   }
 
   if (request.search) {
-    filter.$or = [
-      {
-        title: {
-          $regex: request.search,
-          $options: 'i',
+    filter.$and.push({
+      $or: [
+        {
+          title: {
+            $regex: request.search,
+            $options: 'i',
+          },
         },
-      },
-      {
-        title: {
-          $regex: request.search,
-          $options: 'i',
+        {
+          title: {
+            $regex: request.search,
+            $options: 'i',
+          },
         },
-      },
-    ]
+      ],
+    })
   }
 
-  if (request.id) {
-    filter._id = request.id
-  }
+  if (request.id)
+    filter.$and.push({
+      _id: request.id,
+    })
 
   return {
     filter,

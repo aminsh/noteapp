@@ -13,6 +13,9 @@ import { SharedModule } from './shared/shared.module'
 import { EventModule } from './event/event.module'
 import { ClientsModule, Transport } from '@nestjs/microservices'
 import { MESSAGE_SERVICE } from './shared/shared.contacts'
+import * as mongoose from 'mongoose'
+
+mongoose.set('debug', true)
 
 @Module({
   imports: [

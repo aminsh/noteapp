@@ -1,44 +1,34 @@
 import { gql } from '@apollo/client';
 
-export const GET_ALL_NOTES = gql`
-    query GetAllNote {
-        NoteFind {
-            updatedAt,
-            id
-            title
-            content
-            attachments {
+export const NotesQueryDocument = gql`
+    query NotesFindQuery($request: NoteFindRequest!) {
+        notesFind(request: $request) {
+            data {
+                updatedAt,
                 id
-                filename
-                originalName
-                size
-                mimeType
-            }
-            shared {
-                user {
-                    name
+                title
+                content
+                attachments {
+                    id
+                    filename
+                    originalName
+                    size
+                    mimeType
+                }
+                shared {
+                    user {
+                        name
+                    }
                 }
             }
+            count
         }
+    }
+`
 
-        SharedNoteFind {
-            updatedAt,
-            id
-            title
-            content
-            attachments {
-                id
-                filename
-                originalName
-                size
-                mimeType
-            }
-            shared {
-                user {
-                    name
-                }
-            }
-        }
+export const NoteRemoveMutationDocument = gql`
+    mutation ExecuteNoteRemove($noteId: String!) {
+        noteRemove(noteId: $noteId)
     }
 `
 
@@ -103,11 +93,7 @@ export const UPDATE_NOTE = gql`
     }
 `
 
-export const REMOVE_NOTE = gql`
-    mutation ExecuteNoteRemove($noteId: String!) {
-        NoteRemove(noteId: $noteId)
-    }
-`
+
 
 export const SHARE_NOTE = gql`
     mutation ExecuteNoteShare($noteId: String!, $noteShare: [NoteShareDTO!]!) {
