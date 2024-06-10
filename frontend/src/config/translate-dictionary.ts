@@ -44,4 +44,5 @@ export const translateDictionary: Record<string, string> = {
   add_to_favorite: 'Add a favorite',
   preview: 'Preview',
   link_copied: 'Link copied',
+  file_manager: 'File Manager',
 }

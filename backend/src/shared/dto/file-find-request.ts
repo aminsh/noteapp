@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { PageableRequest } from '../type'
 import { IsOptional, IsString } from 'class-validator'
-import { FilterQuery } from 'mongoose'
+import { FilterQuery, Types } from 'mongoose'
 import { File } from '../schema/file'
 
 @InputType()
@@ -10,6 +10,16 @@ export class FileFindRequest extends PageableRequest {
   @IsString()
   @IsOptional()
   search: string
+
+  @Field(() => [String], {nullable: true})
+  @IsString({each: true})
+  @IsOptional()
+  ids: string[]
+
+  @Field(() => [String], {nullable: true})
+  @IsString({each: true})
+  @IsOptional()
+  notEqualIds: string[]
 }
 
 export const handleFileFindRequest = (request: FileFindRequest): { filter: FilterQuery<File> } => {
@@ -19,6 +29,16 @@ export const handleFileFindRequest = (request: FileFindRequest): { filter: Filte
     filter.originalName = {
       $regex: request.search,
       $options: 'i',
+    }
+
+  if (request.ids?.length)
+    filter._id = {
+      $in: request.ids,
+    }
+
+  if (request.notEqualIds?.length)
+    filter._id = {
+      $nin: request.notEqualIds,
     }
 
   return {

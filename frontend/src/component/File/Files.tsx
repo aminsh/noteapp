@@ -1,13 +1,45 @@
 import { File } from '../../type/entity'
-import { Spin, Table, TableProps, Tooltip } from 'antd'
+import { Button, Row, Spin, Table, TableProps, Tooltip } from 'antd'
 import { translate } from '../../utils'
-import { useQuery } from '@apollo/client'
-import { FILE_LIST } from '../../gql/file'
-import React from 'react'
-import { FileExcelOutlined, FileImageOutlined, FileJpgOutlined, FilePdfOutlined } from '@ant-design/icons'
+import { useLazyQuery, useQuery } from '@apollo/client'
+import { GET_FILES } from '../../gql/file'
+import React, { useEffect, useState } from 'react'
+import {
+  FileAddFilled,
+  FileExcelOutlined,
+  FileImageOutlined,
+  FileJpgOutlined,
+  FilePdfOutlined
+} from '@ant-design/icons'
+import { PageableRequest, PageableResponse } from '../../type/pagination'
+import { DEFAULT_PAGE_SIZE } from '../../App.constant'
+import { FilesSelector } from './FilesSelector'
+import { FileSelectorDialog } from './FileSelectorDialog'
 
 export const Files = () => {
-  const {data, loading} = useQuery<{FileFind: File[]}>(FILE_LIST)
+  const [query, {loading}] = useLazyQuery<PageableResponse<'filesFind', File>, PageableRequest>(GET_FILES)
+  const [data, setData] = useState<File[]>([])
+  const [total, setTotal] = useState<number>()
+  const [openFileManager, setOpenFileManager] = useState<boolean>(false)
+
+  const fetch = async (page: number, pageSize: number) => {
+    const {data} = await query({
+      variables: {
+        request: {
+          take: pageSize,
+          skip: (page - 1) * pageSize,
+        }
+      }
+    })
+    setData(data?.filesFind.data ?? [])
+    setTotal(data?.filesFind.count)
+  }
+
+  useEffect(() => {
+    fetch(1, DEFAULT_PAGE_SIZE)
+  }, [])
+
+  const [files, setFiles] = useState<string[]>([/*'65ea1b138388f4768fc36d25', '660b0dc2bfb9328747468eea'*/])
 
   const columns: TableProps<File>['columns'] = [
     {
@@ -32,10 +64,25 @@ export const Files = () => {
   return (<>
     <Spin spinning={loading}>
       <Table
-        dataSource={data?.FileFind}
+        dataSource={data}
         columns={columns}
+        pagination={{
+          position: ['bottomCenter'],
+          onChange: fetch,
+          total: total,
+          pageSize: 10,
+        }}
       />
     </Spin>
+
+    <Button
+      icon={<FileAddFilled/>}
+      onClick={() => setOpenFileManager(true)}
+    />
+    <FileSelectorDialog
+      open={openFileManager}
+      onClose={() => setOpenFileManager(false)}
+    />
   </>)
 }
 

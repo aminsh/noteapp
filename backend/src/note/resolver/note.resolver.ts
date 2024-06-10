@@ -11,7 +11,7 @@ import { JwtGqlAuthenticationGuard } from 'dx-nest-core/auth'
 import { noteAssembler } from '../dto/note-assembler'
 import { NpRequestContext } from '../../shared/service/np-request-context.service'
 import { NoteShareDTO } from '../dto/note-shared.dto'
-import { handleNoteFileRequest, NoteFileRequest } from '../dto/note-file.request'
+import { handleNoteFindRequest, NoteFindRequest } from '../dto/note-find.request'
 
 @UseGuards(JwtGqlAuthenticationGuard)
 @Resolver(() => NoteView)
@@ -25,9 +25,9 @@ export class NoteResolver {
 
   @Query(() => NotePageableResponse, {name: 'notesFind'})
   async find(
-    @Args('request', {type: () => NoteFileRequest}) request: NoteFileRequest,
+    @Args('request', {type: () => NoteFindRequest}) request: NoteFindRequest,
   ): Promise<NotePageableResponse> {
-    const {filter} = handleNoteFileRequest(request, this.requestContext.authenticatedUser.id)
+    const {filter} = handleNoteFindRequest(request, this.requestContext.authenticatedUser.id)
 
     const [data, count] = await Promise.all([
       this.noteModel.find(filter)

@@ -29,6 +29,15 @@ export interface NoteShare {
   access: NoteAccess
 }
 
+export enum FileType {
+  JPG = 'JPG',
+  PNG = 'PNG',
+  XLS = 'XLS',
+  PDF = 'PDF',
+  DOC = 'DOC',
+  TXT = 'TXT',
+}
+
 export interface File {
   id: string
   createdBy: User
@@ -36,6 +45,7 @@ export interface File {
   originalName: string
   mimeType: string
   size: number
+  type: FileType
 }
 
 export enum NoteAccess {

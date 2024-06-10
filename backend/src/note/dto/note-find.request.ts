@@ -1,11 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsBoolean, IsOptional, IsString } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
 import { FilterQuery } from 'mongoose'
 import { Note } from '../schema/note'
 import { PageableRequest } from '../../shared/type'
 
 @InputType()
-export class NoteFileRequest extends PageableRequest {
+export class NoteFindRequest extends PageableRequest {
   @Field(() => String, {nullable: true})
   @IsString()
   @IsOptional()
@@ -17,7 +17,7 @@ export class NoteFileRequest extends PageableRequest {
   id: string
 }
 
-export const handleNoteFileRequest = (request: NoteFileRequest, userId: string): { filter: FilterQuery<Note> } => {
+export const handleNoteFindRequest = (request: NoteFindRequest, userId: string): { filter: FilterQuery<Note> } => {
   const filter: FilterQuery<Note> = {
     $or: [
       {

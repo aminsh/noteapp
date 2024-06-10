@@ -18,7 +18,7 @@ export class FileResolver {
   ) {
   }
 
-  @Query(() => FilePageableResponse, {name: 'fileFind'})
+  @Query(() => FilePageableResponse, {name: 'filesFind'})
   async find(
     @Args('request', {type: () => FileFindRequest}) request: FileFindRequest,
   ): Promise<FilePageableResponse> {
@@ -30,7 +30,12 @@ export class FileResolver {
     }
 
     const [data, count] = await Promise.all([
-      this.model.find(filter)
+      this.model.find(
+        filter,
+        {},
+        {
+          sort: {createdAt: -1},
+        })
         .populate('createdBy')
         .limit(request.take)
         .skip(request.skip),
