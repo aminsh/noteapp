@@ -4,7 +4,6 @@ import { Entity } from '../../shared/type'
 import { User } from '../../user/shema/user'
 import { File } from '../../shared/schema/file'
 import { NoteShared, NoteSharedSchema } from './note-shared'
-import { NoteContentSchema, NoteContentType } from './note-content'
 
 @Schema({ timestamps: true })
 export class Note extends Entity {
@@ -14,8 +13,8 @@ export class Note extends Entity {
   @Prop()
   title: string
 
-  @Prop([ { type: NoteContentSchema } ])
-  contents: NoteContentType[]
+  @Prop()
+  content: string
 
   @Prop([ { type: mongoose.Schema.Types.ObjectId, ref: File.name } ])
   attachments: File[]

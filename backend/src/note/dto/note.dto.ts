@@ -1,6 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsArray, IsOptional, IsString } from 'class-validator'
-import { NoteContentDtoType, NoteContentTypeDto } from './note-content.dto'
 
 @InputType()
 export class NoteDto {
@@ -8,9 +7,9 @@ export class NoteDto {
   @IsString()
   title: string
 
-  @Field(() => [NoteContentDtoType])
-  @IsString({each: true})
-  contents: NoteContentTypeDto[]
+  @Field()
+  @IsString()
+  content: string
 
   @Field(() => [String], {nullable: true})
   @IsString({each: true})

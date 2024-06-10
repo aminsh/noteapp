@@ -13,9 +13,9 @@ export const noteAssembler = (entity: Note): NoteView => {
     updatedAt: entity.updatedAt,
     id: entity._id,
     title: entity.title,
-    content: entity.contents.toString(),
+    content: entity.content,
     owner: userAssembler(entity.owner),
     attachments: entity.attachments?.map(fileAssembler),
-    shared: entity.shared?.map(noteSharedAssembler)
+    shared: entity.shared?.map(noteSharedAssembler),
   }
 }
