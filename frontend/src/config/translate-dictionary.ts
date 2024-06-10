@@ -6,6 +6,7 @@ export const translateDictionary: Record<string, string> = {
   my: 'My',
   edit: 'Edit',
   save: 'Save',
+  new: 'New',
   cancel: 'Cancel',
   remove: 'Remove',
   email: 'Email',

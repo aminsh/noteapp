@@ -26,8 +26,22 @@ export const NotesQueryDocument = gql`
     }
 `
 
+export const NoteCreateMutationDocument = gql`
+    mutation CreateNote($input: NoteDto!) {
+        noteCreate(input: $input) {
+            id
+        }
+    }
+`
+
+export const NoteUpdateMutationDocument = gql`
+    mutation updateNote($id: String!,$input: NoteDto!) {
+        noteUpdate(id: $id, input: $input)
+    }
+`
+
 export const NoteRemoveMutationDocument = gql`
-    mutation ExecuteNoteRemove($noteId: String!) {
+    mutation RemoveNote($noteId: String!) {
         noteRemove(noteId: $noteId)
     }
 `
@@ -79,19 +93,9 @@ export const GET_NOTE_SHARED_BY_ID = gql`
     }
 `
 
-export const CREATE_NOTE = gql`
-    mutation ExecuteNoteCreate($noteCreate: NoteDto!) {
-        NoteCreate(noteCreate: $noteCreate) {
-            id
-        }
-    }
-`
 
-export const UPDATE_NOTE = gql`
-    mutation ExecuteNoteUpdate($noteId: String!,$noteUpdate: NoteDto!) {
-        NoteUpdate(noteId: $noteId,noteUpdate: $noteUpdate)
-    }
-`
+
+
 
 
 

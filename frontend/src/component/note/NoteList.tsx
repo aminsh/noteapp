@@ -9,9 +9,13 @@ import { NoteCard } from './NoteCard'
 import { NotePreviewDialog } from './NotePreview'
 import { Page, PageableRequest, PageableResponse } from '../../type/pagination'
 import { DEFAULT_PAGE_SIZE } from '../../App.constant'
+import { Outlet, useNavigate } from 'react-router-dom'
+import { NoteEntry } from './NoteEntry'
 
 export const NoteList = () => {
-  const [find, {loading}] = useLazyQuery<PageableResponse<'notesFind', Note>, PageableRequest<{search?: string}>>(NotesQueryDocument)
+  const [find, {loading}] = useLazyQuery<PageableResponse<'notesFind', Note>, PageableRequest<{
+    search?: string
+  }>>(NotesQueryDocument)
   const [page, setPage] = useState<Page>({pageSize: DEFAULT_PAGE_SIZE, page: 1, total: 0})
   const [data, setData] = useState<Note[]>([])
   const [search, setSearch] = useState<string>()
@@ -19,17 +23,18 @@ export const NoteList = () => {
   const [idBeingShared, setIdBeingShared] = useState<string | null>()
   const [showPreview, setShowPreview] = useState(false)
   const [selectedNote, setSelectedNote] = useState<Note>()
-  const [messageApi,contextHolder] = message.useMessage()
+  const [messageApi, contextHolder] = message.useMessage()
+  const [openEntry, setOpenEntry] = useState<boolean>(false)
 
-  const fetch = async (input: Partial<Page>) => {
+  const fetch = async (page: Pick<Page, 'page' | 'pageSize'>) => {
     const {data} = await find({
       variables: {
         request: {
           take: page.pageSize,
           skip: (page.page - 1) * page.pageSize,
           search,
-        }
-      }
+        },
+      },
     })
 
     setData(data?.notesFind.data ?? [])
@@ -75,6 +80,10 @@ export const NoteList = () => {
         {data?.map(note => (
           <NoteCard
             note={note}
+            edit={() => {
+              setSelectedNote(note)
+              setOpenEntry(true)
+            }}
             share={() => setIdBeingShared(note.id)}
             remove={() => handleRemove(note.id)}
             preview={() => {
@@ -85,18 +94,25 @@ export const NoteList = () => {
           />
         ))}
       </Space>
+
       <Pagination
-        className='d-flex justify-content-center'
+        className="d-flex justify-content-center"
         pageSize={page.pageSize}
         onChange={(page, pageSize) => fetch({page, pageSize})}
         total={page.total}
       />
     </Spin>
 
+    <NoteEntry
+      open={openEntry}
+      onClose={() => setOpenEntry(false)}
+      id={selectedNote?.id}
+    />
+
     <NoteShareDialog
       onClose={() => setIdBeingShared(null)}
       noteId={idBeingShared}
-      onChange={()=> fetch(page)}
+      onChange={() => fetch(page)}
     />
 
     <NotePreviewDialog

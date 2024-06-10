@@ -46,7 +46,7 @@ export class NoteResolver {
   }
 
   @Mutation(() => NoteView, {name: 'noteCreate'})
-  async create(@Args('noteCreate') dto: NoteDto): Promise<NoteView> {
+  async create(@Args('input') dto: NoteDto): Promise<NoteView> {
     const result = await this.noteService.create(dto)
     return noteAssembler(result)
   }
@@ -56,8 +56,8 @@ export class NoteResolver {
     nullable: true,
   })
   update(
-    @Args('noteId') id: string,
-    @Args('noteUpdate') dto: NoteDto,
+    @Args('id') id: string,
+    @Args('input') dto: NoteDto,
   ): Promise<void> {
     return this.noteService.update(id, dto)
   }

@@ -15,14 +15,14 @@ import { useNavigate } from 'react-router-dom'
 
 export type NoteCardProps = {
   note: Note
+  edit: () => void
   share: () => void
   remove: () => void
   preview: () => void
   getPublicLink: () => void
 }
 
-export const NoteCard = ({note, share, remove, preview, getPublicLink}: NoteCardProps) => {
-  const navigate = useNavigate()
+export const NoteCard = ({note, edit, share, remove, preview, getPublicLink}: NoteCardProps) => {
   const menuClickMapper: Record<string, () => void> = {
     'share': share,
     'remove': remove,
@@ -92,15 +92,8 @@ export const NoteCard = ({note, share, remove, preview, getPublicLink}: NoteCard
           shape='circle'
           key='edit'
           icon={<EditOutlined/>}
-          onClick={() => navigate(`/notes/${note.id}/edit`)}
+          onClick={edit}
         />,
-        /*<Button
-          type='text'
-          shape='circle'
-          key='remove'
-          danger
-          icon={<DeleteOutlined/>}
-        />,*/
         <Dropdown
           menu={{items, onClick: onMenuClick}}
           placement='bottomLeft'

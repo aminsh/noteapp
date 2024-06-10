@@ -1,71 +1,130 @@
-import { useParams } from 'react-router-dom'
 import { Note } from '../../type/entity'
-import { Badge, Card, Form, Input } from 'antd'
+import { Form, Input, Modal, Space, Spin } from 'antd'
 import { useEffect } from 'react'
-import { translate } from '../../utils'
+import { notify, translate } from '../../utils'
 import { NoteEditorControl } from './NoteEditorControl'
 import { NoteAttachments } from './NoteAttachments'
-import { useNoteSync } from '../../hook/note-sync.hook'
+import { useLazyQuery, useMutation } from '@apollo/client'
+import { PageableRequest, PageableResponse } from '../../type/pagination'
+import { NoteCreateMutationDocument, NotesQueryDocument, NoteUpdateMutationDocument } from '../../gql/note'
+import { SaveOutlined } from '@ant-design/icons'
 
 const {useForm} = Form
 
-export const NoteEntry = () => {
-  const [form] = useForm<Note | undefined>()
-  const {id} = useParams<{ id: string }>()
-  const {syncing, update, current, setCurrent} = useNoteSync()
+export type NoteEntryProps = {
+  id?: string
+  open?: boolean
+  onClose?: () => void
+}
 
-  const handleSync = (data: any) => {
-    const dto = {
-      ...data,
-      attachments: data?.attachments.map((e: any) => e.id),
+export const NoteEntry = ({onClose, open, id}: NoteEntryProps) => {
+  const [form] = useForm<Note>()
+  const [find, {loading}] = useLazyQuery<PageableResponse<'notesFind', Note>, PageableRequest<{
+    id: string
+  }>>(NotesQueryDocument, {
+    variables: {
+      request: {
+        skip: 0,
+        take: 1,
+        id: id ?? '',
+      },
+    },
+  })
+  const [create, {loading: creating}] = useMutation<void, { dto: any }>(NoteCreateMutationDocument)
+  const [update, {loading: updating}] = useMutation<void, { dto: any }>(NoteUpdateMutationDocument)
+
+  const fetch = async () => {
+    let entity: Note = {
+      id: '',
+      title: '',
+      content: '',
+      attachments: [],
+      shared: [],
     }
-    return update(id as string, dto)
+
+    if (!id) {
+      const {data} = await find({
+        variables: {
+          request: {
+            take: 1,
+            skip: 0,
+            id: id ?? '',
+          },
+        },
+      })
+
+      entity = (data?.notesFind.data ?? [])[0]
+    }
+
+    form.setFieldsValue(entity)
   }
 
   useEffect(() => {
-    if (!id)
-      return
-    setCurrent(id)
+    fetch()
   }, [id])
 
-  useEffect(() => {
-    form.setFieldsValue(current)
-  }, [current])
+  const handleSave = async (data: Note) => {
+    const dto = {
+      title: data.title,
+      content: data.content,
+      attachments: data.attachments?.map(at => at.id),
+    }
+
+    id
+      ? await update({
+        variables: {dto},
+      })
+      : await create({
+        variables: {dto},
+      })
+
+    notify.success(
+      translate('note'),
+      translate('save_success_message'),
+    )
+
+    onClose!()
+  }
 
   return (
-    <Form
-      onFinish={handleSync}
-      onFieldsChange={form.submit}
-      form={form}
-      layout='vertical'
+    <Modal
+      title={translate(id ? 'edit' : 'new', 'note')}
+      open={open}
+      okText={<Space>
+        <SaveOutlined/>
+        {translate('save')}
+      </Space>}
+      onCancel={onClose}
+      confirmLoading={creating || updating}
+      width={700}
     >
-      <Card>
-        <Badge
-          color='green'
-          text={syncing
-            ? translate('syncing', '...')
-            : translate('synced')}
-        />
-
-        <Form.Item
-          label={translate('title')}
-          name='title'
+      <Spin spinning={loading}>
+        <Form
+          onFinish={handleSave}
+          onFieldsChange={form.submit}
+          form={form}
+          layout="vertical"
         >
-          <Input/>
-        </Form.Item>
+          <Form.Item
+            label={translate('title')}
+            name="title"
+          >
+            <Input/>
+          </Form.Item>
 
-        <Form.Item
-          name='content'
-        >
-          <NoteEditorControl/>
-        </Form.Item>
+          <Form.Item
+            name="content"
+          >
+            <NoteEditorControl/>
+          </Form.Item>
 
-        <Form.Item
-          name='attachments'
-        >
-          <NoteAttachments/>
-        </Form.Item>
-      </Card>
-    </Form>
+          <Form.Item
+            name="attachments"
+          >
+            <NoteAttachments/>
+          </Form.Item>
+        </Form>
+      </Spin>
+    </Modal>
   )
 }

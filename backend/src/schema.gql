@@ -98,8 +98,8 @@ input NoteFindRequest {
 }
 
 type Mutation {
-  noteCreate(noteCreate: NoteDto!): NoteView!
-  noteUpdate(noteId: String!, noteUpdate: NoteDto!): Void
+  noteCreate(input: NoteDto!): NoteView!
+  noteUpdate(id: String!, input: NoteDto!): Void
   noteRemove(noteId: String!): Void
   noteShare(noteId: String!, noteShare: [NoteShareDTO!]!): Void
   register(userRegister: RegisterDTO!): IdentityResponse!
