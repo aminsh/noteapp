@@ -1,11 +1,12 @@
 import { Button, Form, Modal, Select, Spin, Tooltip } from 'antd'
 import React, { useEffect } from 'react'
-import { NoteAccess, NoteShare } from '../../type/entity'
+import { Note, NoteAccess } from '../../type/entity'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { notify, translate } from '../../utils';
-import { GET_NOTE_SHARED_BY_ID, SHARE_NOTE } from '../../gql/note';
+import { NoteQueryShareUsersDocument, NoteShareMutationDocument } from '../../gql/note';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { NoteShareUser } from './NoteShareUser';
+import { PageableRequest, PageableResponse } from '../../type/pagination'
 
 const {useForm} = Form
 
@@ -22,10 +23,11 @@ interface NoteShareDTO {
 
 export const NoteShareDialog = ({onClose, noteId, onChange}: NoteShareProps) => {
   const [form] = useForm<{ shared: NoteShareDTO[] }>()
-  const [load, {loading: loadingShared}] = useLazyQuery<{ NoteById: { shared: NoteShare[] } }, {
-    noteId: string
-  }>(GET_NOTE_SHARED_BY_ID)
-  const [share, {loading: savingShared}] = useMutation<void, { noteId: string, noteShare: NoteShareDTO[] }>(SHARE_NOTE,
+  const [find, {loading}] = useLazyQuery<
+    PageableResponse<'notesFind', Note>,
+    PageableRequest<{id: string}>
+  >(NoteQueryShareUsersDocument)
+  const [share, {loading: savingShared}] = useMutation<void, { id: string, input: NoteShareDTO[] }>(NoteShareMutationDocument,
     {
       onCompleted: () => {
         notify.success(
@@ -47,16 +49,20 @@ export const NoteShareDialog = ({onClose, noteId, onChange}: NoteShareProps) => 
       shared: [],
     })
 
-    if (!noteId)
+    if(!noteId)
       return
 
-    const {data} = await load({
+    const {data} = await find({
       variables: {
-        noteId,
+        request: {
+          take: 1,
+          skip: 0,
+          id: noteId ?? '',
+        },
       },
     })
 
-    const shared = data?.NoteById?.shared || []
+    const [{shared}] = data?.notesFind.data ?? []
 
     form.setFieldsValue({
       shared: shared.map(({user, access}) => ({userId: user.id, access})),
@@ -65,8 +71,8 @@ export const NoteShareDialog = ({onClose, noteId, onChange}: NoteShareProps) => 
   const save = ({shared}: { shared: NoteShareDTO[] }) => {
     return share({
       variables: {
-        noteId: noteId || '',
-        noteShare: shared.map(sh => ({userId: sh.userId, access: sh.access})),
+        id: noteId || '',
+        input: shared.map(sh => ({userId: sh.userId, access: sh.access})),
       },
     })
   }
@@ -80,11 +86,11 @@ export const NoteShareDialog = ({onClose, noteId, onChange}: NoteShareProps) => 
       onCancel={onClose}
       confirmLoading={savingShared}
     >
-      <Spin spinning={loadingShared}>
+      <Spin spinning={loading}>
         <Form
           onFinish={save}
           form={form}>
-          <Form.List name="shared">
+          <Form.List name='shared'>
             {(fields, {add, remove}) => (
               <>
                 <Tooltip title={translate('add')}>
@@ -94,7 +100,7 @@ export const NoteShareDialog = ({onClose, noteId, onChange}: NoteShareProps) => 
                   />
                 </Tooltip>
 
-                <table className="table">
+                <table className='table'>
                   <thead>
                   <tr>
                     <th style={{width: '60%'}}>{translate('user')}</th>
@@ -127,8 +133,8 @@ export const NoteShareDialog = ({onClose, noteId, onChange}: NoteShareProps) => 
                           <Button
                             onClick={() => remove(index)}
                             icon={<DeleteOutlined/>}
-                            shape="circle"
-                            type="text"
+                            shape='circle'
+                            type='text'
                           />
                         </Tooltip>
                       </td>

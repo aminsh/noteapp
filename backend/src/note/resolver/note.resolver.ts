@@ -75,8 +75,8 @@ export class NoteResolver {
     nullable: true,
   })
   share(
-    @Args('noteId') id: string,
-    @Args({name: 'noteShare', type: () => [NoteShareDTO]}) dto: NoteShareDTO[],
+    @Args('id') id: string,
+    @Args({name: 'input', type: () => [NoteShareDTO]}) dto: NoteShareDTO[],
   ): Promise<void> {
     return this.noteService.share(id, dto)
   }

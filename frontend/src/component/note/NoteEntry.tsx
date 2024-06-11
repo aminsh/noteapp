@@ -20,7 +20,7 @@ export type NoteEntryProps = {
 export const NoteEntry = ({open, entity, onClose, onComplete}: NoteEntryProps) => {
   const [form] = useForm<Note>()
   const [create, {loading: creating}] = useMutation<void, { input: any }>(NoteCreateMutationDocument)
-  const [update, {loading: updating}] = useMutation<void, { input: any }>(NoteUpdateMutationDocument)
+  const [update, {loading: updating}] = useMutation<void, { id: string, input: any }>(NoteUpdateMutationDocument)
 
   useEffect(() => {
     form.setFieldsValue(entity ?? {
@@ -41,7 +41,10 @@ export const NoteEntry = ({open, entity, onClose, onComplete}: NoteEntryProps) =
 
     entity
       ? await update({
-        variables: {input},
+        variables: {
+          id: entity.id,
+          input
+        },
       })
       : await create({
         variables: {input},

@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { FileSelectorDialog } from '../File/FileSelectorDialog'
 import { translate } from '../../utils'
 import { File } from '../../type/entity'
+import { FilesDisplay } from '../File/FilesDisplay'
 
 export const NoteAttachments = ({value, onChange}: FormField<File[]>) => {
   const [openFileSelector, setOpenFileSelector] = useState<boolean>(false)
@@ -21,7 +22,7 @@ export const NoteAttachments = ({value, onChange}: FormField<File[]>) => {
           {translate('select', 'files')}
         </Button>
 
-        <List<File>
+       {/* <List<File>
           key='file-list'
           dataSource={value}
           renderItem={item => (
@@ -40,7 +41,8 @@ export const NoteAttachments = ({value, onChange}: FormField<File[]>) => {
               {item.id}
             </List.Item>
           )}
-        />
+        />*/}
+        <FilesDisplay value={value} onChange={onChange} />
       </Space>
 
       <FileSelectorDialog

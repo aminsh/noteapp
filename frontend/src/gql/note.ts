@@ -14,6 +14,7 @@ export const NotesQueryDocument = gql`
                     originalName
                     size
                     mimeType
+                    type
                 }
                 shared {
                     user {
@@ -46,49 +47,23 @@ export const NoteRemoveMutationDocument = gql`
     }
 `
 
-export const GET_MY_NOTES = gql`
-    query GetMyNotes {
-        NoteFind {
-            id
-            title
-            shared {
-                user {
-                    name
+export const NoteShareMutationDocument = gql`
+    mutation ShareNote($id: String!, $input: [NoteShareDTO!]!) {
+        noteShare(id: $id, input: $input)
+    }
+`
+
+export const NoteQueryShareUsersDocument = gql`
+    query GetShareUsers($request: NoteFindRequest!) {
+        notesFind(request: $request) {
+            data {
+                shared {
+                    user {
+                        id
+                    }
+                    access
                 }
             }
-            attachments {
-                id
-            }
-        }
-    }
-`
-
-export const GET_NOTE_BY_ID = gql`
-    query NoteQuery($noteId: String!) {
-        NoteById(noteId: $noteId) {
-            id
-            title
-            content
-            attachments {
-                id
-                filename
-                originalName
-                size
-                mimeType
-            }
-        }
-    }
-`
-
-export const GET_NOTE_SHARED_BY_ID = gql`
-    query GetNoteSharedById($noteId: String!) {
-        NoteById(noteId: $noteId) {
-            shared {
-                user {
-                    id
-                }
-                access
-            }
         }
     }
 `
@@ -99,8 +74,6 @@ export const GET_NOTE_SHARED_BY_ID = gql`
 
 
 
-export const SHARE_NOTE = gql`
-    mutation ExecuteNoteShare($noteId: String!, $noteShare: [NoteShareDTO!]!) {
-        NoteShare(noteId: $noteId, noteShare: $noteShare)
-    }
-`
+
+
+

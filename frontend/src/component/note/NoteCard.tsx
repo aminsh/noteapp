@@ -1,17 +1,17 @@
-import { Avatar, Badge, Button, Card, Col, Dropdown, Input, MenuProps, Row, Space, Tooltip, Typography } from 'antd'
+import { Avatar, Button, Card, Dropdown, MenuProps, Space, Typography } from 'antd'
 import {
   DeleteOutlined,
   EditOutlined,
-  EllipsisOutlined, LinkOutlined,
+  EllipsisOutlined,
+  LinkOutlined,
   PaperClipOutlined,
   ProfileOutlined,
   ShareAltOutlined,
   StarOutlined,
-  UserOutlined
+  UserOutlined,
 } from '@ant-design/icons'
 import { Note } from '../../type/entity'
 import { translate } from '../../utils'
-import { useNavigate } from 'react-router-dom'
 
 export type NoteCardProps = {
   note: Note
@@ -36,46 +36,46 @@ export const NoteCard = ({note, edit, share, remove, preview, getPublicLink}: No
     {
       key: 'share',
       label: (
-        <Space size='middle'>
+        <Space size="middle">
           <ShareAltOutlined/>
           {translate('share')}
         </Space>
-      )
+      ),
     },
     {
       key: 'get_public_link',
       label: (
-        <Space size='middle'>
+        <Space size="middle">
           <LinkOutlined/>
           {translate('get_public_link')}
         </Space>
-      )
+      ),
     },
     {
       key: 'add_to_favorite',
       label: (
-        <Space size='middle'>
+        <Space size="middle">
           <StarOutlined/>
           {translate('add_to_favorite')}
         </Space>
-      )
+      ),
     },
     {
       key: 'preview',
       label: (
-        <Space size='middle'>
+        <Space size="middle">
           <ProfileOutlined/>
           {translate('preview')}
         </Space>
-      )
+      ),
     },
     {
-      type: 'divider'
+      type: 'divider',
     },
     {
       key: 'remove',
       label: (
-        <Space size='middle'>
+        <Space size="middle">
           <DeleteOutlined/>
           {translate('remove')}
         </Space>
@@ -88,26 +88,26 @@ export const NoteCard = ({note, edit, share, remove, preview, getPublicLink}: No
       style={{width: 300}}
       actions={[
         <Button
-          type='text'
-          shape='circle'
-          key='edit'
+          type="text"
+          shape="circle"
+          key="edit"
           icon={<EditOutlined/>}
           onClick={edit}
         />,
         <Dropdown
           menu={{items, onClick: onMenuClick}}
-          placement='bottomLeft'
+          placement="bottomLeft"
         >
           <Button
-            type='text'
-            shape='circle'
-            key='more'
+            type="text"
+            shape="circle"
+            key="more"
             icon={<EllipsisOutlined/>}
           />
         </Dropdown>,
       ]}
     >
-      <Space direction='vertical'>
+      <Space direction="vertical">
         <Typography.Title
           ellipsis={{rows: 1, expandable: false, symbol: 'more'}}
           style={{width: 250, height: 40}}
@@ -130,7 +130,7 @@ export const NoteCard = ({note, edit, share, remove, preview, getPublicLink}: No
                     </Avatar>,
                   )}
                 </Avatar.Group>
-                <span className='text-muted'>{translate('shared_with', note.shared?.length.toString(), 'people')}</span>
+                <span className="text-muted">{translate('shared_with', note.shared?.length.toString(), 'people')}</span>
               </Space>
               : ''
           }
@@ -141,7 +141,7 @@ export const NoteCard = ({note, edit, share, remove, preview, getPublicLink}: No
             note.attachments?.length
               ? <Space>
                 <PaperClipOutlined style={{fontSize: 20}}/>
-                <span className='text-muted'>
+                <span className="text-muted">
                     {note.attachments?.length} {translate('files')}
                   </span>
               </Space>

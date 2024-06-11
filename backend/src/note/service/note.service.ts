@@ -21,19 +21,22 @@ export class NoteService {
     private fileRepository: FileRepository,
     private requestContext: NpRequestContext,
     @Inject(MESSAGE_SERVICE) private message: MessageService,
-  ) {}
+  ) {
+  }
 
   async create(dto: NoteDto): Promise<Note> {
     const entity = new Note()
-    entity.owner = await this.userRepository.findOne({ _id: this.requestContext.authenticatedUser.id })
+    entity.owner = await this.userRepository.findOne({_id: this.requestContext.authenticatedUser.id})
     entity.title = dto.title
     entity.content = dto.content
+
+    await this.resolveFiles(dto.attachments, entity)
 
     return this.noteRepository.create(entity)
   }
 
   async update(_id: string, dto: NoteDto): Promise<void> {
-    const entity = await this.noteRepository.findOne({ _id })
+    const entity = await this.noteRepository.findOne({_id})
 
     if (!entity)
       throw new NotFoundException()
@@ -56,7 +59,7 @@ export class NoteService {
   }
 
   async remove(_id: string): Promise<void> {
-    const entity = await this.noteRepository.findOne({ _id })
+    const entity = await this.noteRepository.findOne({_id})
 
     if (!entity)
       throw new NotFoundException()
@@ -65,7 +68,7 @@ export class NoteService {
   }
 
   async share(_id: string, dto: NoteShareDTO[]): Promise<void> {
-    const entity = await this.noteRepository.findOne({ _id })
+    const entity = await this.noteRepository.findOne({_id})
 
     if (!entity)
       throw new NotFoundException()
@@ -75,13 +78,13 @@ export class NoteService {
 
     const users = await this.userRepository.find({
       _id: {
-        $in: dto.map(e => e.userId)
-      }
+        $in: dto.map(e => e.userId),
+      },
     })
 
     entity.shared = dto.map<NoteShared>(e => ({
       user: users.find(u => u._id.toString() === e.userId),
-      access: e.access
+      access: e.access,
     }))
 
     if (Enumerable.from(entity.shared).any(e => !e.user))
@@ -98,18 +101,18 @@ export class NoteService {
 
     const files: File[] = await this.fileRepository.find({
       _id: {
-        $in: filesDto
-      }
+        $in: filesDto,
+      },
     })
 
     if (files.length !== filesDto.length)
       throw new BadRequestException(NOTE_MESSAGE.FILES_IS_INVALID)
 
-    return files
+    entity.attachments = files
   }
 
   private isUserAllowedToEdit(entity: Note): void {
-    const { id: currentUserId } = this.requestContext.authenticatedUser
+    const {id: currentUserId} = this.requestContext.authenticatedUser
 
     if (entity.owner._id.toString() === currentUserId)
       return

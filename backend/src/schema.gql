@@ -101,7 +101,7 @@ type Mutation {
   noteCreate(input: NoteDto!): NoteView!
   noteUpdate(id: String!, input: NoteDto!): Void
   noteRemove(noteId: String!): Void
-  noteShare(noteId: String!, noteShare: [NoteShareDTO!]!): Void
+  noteShare(id: String!, input: [NoteShareDTO!]!): Void
   register(userRegister: RegisterDTO!): IdentityResponse!
   login(userLogin: LoginDTO!): TokenResponse!
   update(userId: String!, updateUser: UpdateUserDTO!): Void
