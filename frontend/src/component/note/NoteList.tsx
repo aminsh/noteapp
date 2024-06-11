@@ -1,5 +1,5 @@
 import { Note } from '../../type/entity'
-import { message, Pagination, Space, Spin } from 'antd'
+import { Button, message, Pagination, Row, Space, Spin } from 'antd'
 import { confirm, notify, translate } from '../../utils'
 import React, { useEffect, useState } from 'react'
 import { useLazyQuery, useMutation } from '@apollo/client'
@@ -9,8 +9,8 @@ import { NoteCard } from './NoteCard'
 import { NotePreviewDialog } from './NotePreview'
 import { Page, PageableRequest, PageableResponse } from '../../type/pagination'
 import { DEFAULT_PAGE_SIZE } from '../../App.constant'
-import { Outlet, useNavigate } from 'react-router-dom'
 import { NoteEntry } from './NoteEntry'
+import { PlusOutlined } from '@ant-design/icons'
 
 export const NoteList = () => {
   const [find, {loading}] = useLazyQuery<PageableResponse<'notesFind', Note>, PageableRequest<{
@@ -76,24 +76,41 @@ export const NoteList = () => {
 
   return (<>
     <Spin spinning={loading}>
-      <Space wrap>
-        {data?.map(note => (
-          <NoteCard
-            note={note}
-            edit={() => {
-              setSelectedNote(note)
-              setOpenEntry(true)
-            }}
-            share={() => setIdBeingShared(note.id)}
-            remove={() => handleRemove(note.id)}
-            preview={() => {
-              setShowPreview(true)
-              setSelectedNote(note)
-            }}
-            getPublicLink={() => handleGetPublicLink(note.id)}
-          />
-        ))}
-      </Space>
+      <Row>
+        <Button
+          type="primary"
+          onClick={() => {
+            setSelectedNote(undefined)
+            setOpenEntry(true)
+          }}
+          icon={<PlusOutlined/>}
+        >
+          {translate('new')}
+        </Button>
+      </Row>
+
+      <Row className="mt-3">
+        <Space wrap>
+          {data?.map(note => (
+            <NoteCard
+              key={note.id}
+              note={note}
+              edit={() => {
+                setSelectedNote(note)
+                setOpenEntry(true)
+              }}
+              share={() => setIdBeingShared(note.id)}
+              remove={() => handleRemove(note.id)}
+              preview={() => {
+                setSelectedNote(note)
+                setShowPreview(true)
+              }}
+              getPublicLink={() => handleGetPublicLink(note.id)}
+            />
+          ))}
+        </Space>
+      </Row>
+
 
       <Pagination
         className="d-flex justify-content-center"
@@ -106,7 +123,8 @@ export const NoteList = () => {
     <NoteEntry
       open={openEntry}
       onClose={() => setOpenEntry(false)}
-      id={selectedNote?.id}
+      entity={selectedNote}
+      onComplete={() => fetch(page)}
     />
 
     <NoteShareDialog
