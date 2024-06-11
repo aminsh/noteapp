@@ -46,4 +46,5 @@ export const translateDictionary: Record<string, string> = {
   preview: 'Preview',
   link_copied: 'Link copied',
   file_manager: 'File Manager',
+  select: 'Select',
 }

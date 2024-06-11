@@ -1,72 +1,54 @@
-import { Button, Upload, UploadFile } from 'antd'
-import { UploadOutlined } from '@ant-design/icons'
-import { readUrlAsync, resolvePathFile, translate } from '../../utils'
+import { Button, List, Space } from 'antd'
+import { DeleteOutlined, FileAddOutlined } from '@ant-design/icons'
 import { FormField } from '../../type/form'
+import { useState } from 'react'
+import { FileSelectorDialog } from '../File/FileSelectorDialog'
+import { translate } from '../../utils'
 import { File } from '../../type/entity'
-import { useEffect, useState } from 'react'
-import { useFileUploader } from '../../hook/file-uploader.hook'
 
-export const NoteAttachments = ({ value, onChange }: FormField<File[]>) => {
-  const fileUploader = useFileUploader()
-  const [ files, setFiles ] = useState<UploadFile[]>([])
-
-  const upload = async (file: UploadFile) => {
-    const result = await fileUploader.upload(file)
-    set([ ...files, mapToUploadFile(result) ])
-  }
-
-  const mapToUploadFile = (source: File): UploadFile => ({
-    uid: source.id,
-    name: source.originalName,
-    fileName: source.filename,
-    size: source.size,
-    status: 'done',
-    url: resolvePathFile(source.filename)
-  })
-
-  const mapToFile = (source: UploadFile): File => ({
-    id : source.uid,
-    originalName : source.name,
-    filename : source.fileName || '',
-    size : source.size || 0,
-  } as File)
-
-  const set = (files: UploadFile[]) => {
-    setFiles(files)
-    onChange!(
-      files
-        .filter(f => f.status === 'done')
-        .map(mapToFile)
-    )
-  }
-
-  useEffect(() => {
-    setFiles(
-      (value || []).map<UploadFile>(mapToUploadFile)
-    )
-  }, [ value ])
+export const NoteAttachments = ({value, onChange}: FormField<File[]>) => {
+  const [openFileSelector, setOpenFileSelector] = useState<boolean>(false)
 
   return (
-    <Upload
-      className='upload-list-inline'
-      beforeUpload={ async (file: UploadFile) => {
-        file.url = await readUrlAsync(file)
-        set([ ...files, file ])
-        return false
-      } }
-      listType='picture'
-      fileList={ files }
-      onChange={ async ({ file }) => {
-        if (!file.status)
-          await upload(file)
-      } }
-      onRemove={ file => {
-        set((files || []).filter(f => f.uid !== file.uid))
-      } }
-    >
-      <Button icon={ <UploadOutlined/> }>
-        { translate('upload') }
-      </Button>
-    </Upload>
+    <>
+      <Space direction="vertical">
+        <Button
+          key='open-file-selector'
+          type='primary'
+          icon={<FileAddOutlined/>}
+          onClick={() => setOpenFileSelector(true)}
+        >
+          {translate('select', 'files')}
+        </Button>
+
+        <List<File>
+          key='file-list'
+          dataSource={value}
+          renderItem={item => (
+            <List.Item
+              key={item.id}
+              actions={[
+                <Button
+                  type="text"
+                  shape="circle"
+                  danger
+                  icon={<DeleteOutlined/>}
+                  onClick={() => onChange!((value ?? []).filter(it => it.id !== item.id))}
+                />,
+              ]}
+            >
+              {item.id}
+            </List.Item>
+          )}
+        />
+      </Space>
+
+      <FileSelectorDialog
+        value={value?.map(it => it.id)}
+        onChange={value => onChange!(value.map(it => ({id: it} as File)))}
+        open={openFileSelector}
+        onClose={() => setOpenFileSelector(false)}
+      />
+    </>
   )
 }

@@ -111,7 +111,6 @@ export const NoteList = () => {
         </Space>
       </Row>
 
-
       <Pagination
         className="d-flex justify-content-center"
         pageSize={page.pageSize}
@@ -143,5 +142,4 @@ export const NoteList = () => {
     />
     {contextHolder}
   </>)
-
 }
