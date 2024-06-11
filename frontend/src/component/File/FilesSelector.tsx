@@ -1,16 +1,14 @@
-import { File, FileType } from '../../type/entity'
+import { File } from '../../type/entity'
 import { useLazyQuery } from '@apollo/client'
 import { PageableRequest, PageableResponse } from '../../type/pagination'
 import { GET_FILES } from '../../gql/file'
 import React, { useEffect, useState } from 'react'
 import { DEFAULT_PAGE_SIZE } from '../../App.constant'
-import { Button, Checkbox, Image, Input, List, Pagination, Space, Spin, Upload, UploadFile } from 'antd'
-import { FileImageOutlined, FileJpgOutlined, SearchOutlined, UploadOutlined } from '@ant-design/icons'
-import { resolvePathFile, translate } from '../../utils'
+import { Button, Checkbox, Input, List, Pagination, Space, Spin, Upload, UploadFile } from 'antd'
+import { SearchOutlined, UploadOutlined } from '@ant-design/icons'
+import { translate } from '../../utils'
 import { useFileUploader } from '../../hook/file-uploader.hook'
-import SvgPdf from '../../asset/pdf.svg'
-import SvgXls from '../../asset/xls.svg'
-import { FileIcon } from './FileIcon'
+import { FileTypeIcon } from './FileTypeIcon'
 
 export type FileSelectorProps = {
   value?: string[]
@@ -173,27 +171,7 @@ export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
   )
 }
 
-const fileMimeMapper: Record<FileType, React.ReactNode> = {
-  [FileType.JPG]: <FileJpgOutlined style={{fontSize: 30}}/>,
-  [FileType.PNG]: <FileImageOutlined style={{fontSize: 30}}/>,
-  [FileType.PDF]: <FileIcon size={30} src={SvgPdf} alt='pdf'/>,
-  [FileType.XLS]: <FileIcon size={30} src={SvgXls} alt='xls'/>,
-  [FileType.DOC]: <></>,
-  [FileType.TXT]: <></>,
-}
 
-const FileTypeIcon = ({file}: { file: File }) => {
-  return (<>
-    {
-      [FileType.JPG, FileType.PNG].includes(file.type)
-        ? <Image
-          width={30} height={30}
-          src={resolvePathFile(file.filename)}
-        />
-        : fileMimeMapper[file.type]
-    }
-  </>)
-}
 
 const FileItem = ({file, onCheckedChange, checked}: {
   file: File,
@@ -206,7 +184,10 @@ const FileItem = ({file, onCheckedChange, checked}: {
         checked={!checked}
         onChange={() => onCheckedChange(file, checked)}
       />
-      <FileTypeIcon file={file}/>
+      <FileTypeIcon
+        file={file}
+        size={30}
+      />
       {file.originalName}
     </Space>
   </List.Item>
