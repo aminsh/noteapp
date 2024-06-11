@@ -1,5 +1,5 @@
 import { Note } from '../../type/entity'
-import { Form, Input, Modal, Space, Spin } from 'antd'
+import { Form, Input, Modal, Space } from 'antd'
 import { useEffect } from 'react'
 import { notify, translate } from '../../utils'
 import { NoteEditorControl } from './NoteEditorControl'
