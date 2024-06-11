@@ -111,7 +111,6 @@ export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
     <Space
       direction='vertical'
       className='w-100'>
-
       <Upload
         beforeUpload={async (file: UploadFile) => {
           debugger
@@ -189,31 +188,41 @@ const fileMimeMapper: Record<FileType, React.ReactNode> = {
   [FileType.TXT]: <></>,
 }
 
-const FileTypeIcon = ({file}: { file: File }) => {
+const FileTypeIcon = ({file, fromGoogleDrive}: { file: File, fromGoogleDrive?: boolean }) => {
   return (<>
     {
       [FileType.JPG, FileType.PNG].includes(file.type)
         ? <Image
           width={30} height={30}
-          src={resolvePathFile(file.filename)}
+          src={
+            fromGoogleDrive
+              ? file.url
+              : resolvePathFile(file.filename)
+          }
         />
         : fileMimeMapper[file.type]
     }
   </>)
 }
 
-const FileItem = ({file, onCheckedChange, checked}: {
+export const FileItem = ({file, onCheckedChange, checked, fromGoogleDrive, exportToServer}: {
   file: File,
   onCheckedChange: (file: File, checked: boolean) => void,
   checked: boolean
+  fromGoogleDrive?: boolean
+  exportToServer?: () => void
 }) => {
-  return <List.Item>
+  return <List.Item actions={[
+    <Button onClick={exportToServer}>
+      {translate('Export')}
+    </Button>
+  ]}>
     <Space>
       <Checkbox
         checked={!checked}
         onChange={() => onCheckedChange(file, checked)}
       />
-      <FileTypeIcon file={file}/>
+      <FileTypeIcon file={file} fromGoogleDrive={fromGoogleDrive}/>
       {file.originalName}
     </Space>
   </List.Item>

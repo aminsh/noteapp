@@ -1,3 +1,5 @@
+import { File } from './entity'
+
 export type PageableRequest<TExtra = object> = {
   request: {
     take: number
@@ -9,5 +11,12 @@ export type PageableResponse<TKey extends string, TData> = {
   [key in TKey]: {
     data: TData[]
     count: number
+  }
+}
+
+export type GoogleDrivePageableResponse = {
+  googleDriveFind: {
+    data: File[]
+    nextPageToken: string
   }
 }

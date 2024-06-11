@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { FilePageableResponse, FileView } from '../dto/file-view'
 import { InjectModel } from '@nestjs/mongoose'
 import { File } from '../schema/file'
@@ -8,6 +8,9 @@ import { fileAssembler } from '../dto/file-assembler'
 import { UseGuards } from '@nestjs/common'
 import { JwtGqlAuthenticationGuard } from 'dx-nest-core/auth'
 import { FileFindRequest, handleFileFindRequest } from '../dto/file-find-request'
+import { GoogleDriveService } from '../service/google-drive.service'
+import { GoogleDriveFindRequest, GoogleDrivePageableResponse } from '../dto/google-drive.view'
+import { GoogleDriveExportDto } from '../dto/google-drive-export.dto'
 
 @UseGuards(JwtGqlAuthenticationGuard)
 @Resolver(() => FileView)
@@ -15,6 +18,7 @@ export class FileResolver {
   constructor(
     @InjectModel(File.name) private model: Model<File>,
     private requestContext: NpRequestContext,
+    private googleDriveService: GoogleDriveService,
   ) {
   }
 
@@ -46,5 +50,19 @@ export class FileResolver {
       count,
       data: data.map(fileAssembler),
     }
+  }
+
+  @Query(() => GoogleDrivePageableResponse, {name: 'googleDriveFind'})
+  googleDriveFind(
+    @Args('request', {type: () => GoogleDriveFindRequest}) request: GoogleDriveFindRequest,
+  ): Promise<GoogleDrivePageableResponse> {
+    return this.googleDriveService.findFiles(request)
+  }
+
+  @Mutation(() => FileView, {name: 'googleDriveExport'})
+  googleDriveExport(
+    @Args('input', {type: () => GoogleDriveExportDto}) input: GoogleDriveExportDto
+  ): Promise<FileView> {
+    return this.googleDriveService.export(input)
   }
 }

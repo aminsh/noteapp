@@ -14,3 +14,27 @@ export const GET_FILES = gql`
         }
     }
 `
+
+export const GET_GOOGLE_DRIVE_FILES = gql`
+    query GetGoogleDriveFiles($request: GoogleDriveFindRequest!) {
+        googleDriveFind(request: $request) {
+            data {
+                id
+                originalName
+                type
+                mimeType
+                url
+            }
+            nextPageToken
+        }
+    }
+`
+
+export const EXPORT = gql`
+    mutation Export($input: GoogleDriveExportDto!) {
+        googleDriveExport(input: $input) {
+            id
+            originalName
+        }
+    }
+`

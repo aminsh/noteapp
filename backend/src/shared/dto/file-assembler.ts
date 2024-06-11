@@ -1,6 +1,7 @@
 import { File } from '../schema/file'
 import { FileType, FileView } from './file-view'
 import { userAssembler } from '../../user/dto/user-assembler'
+import { drive_v3 } from 'googleapis'
 
 export const fileAssembler = (entity: File): FileView => {
   return {
@@ -11,6 +12,7 @@ export const fileAssembler = (entity: File): FileView => {
     size: entity.size,
     mimeType: entity.mimeType,
     type: fileMimeMapper[entity.mimeType],
+    url: null,
   }
 }
 
@@ -21,3 +23,23 @@ const fileMimeMapper: Record<string, FileType> = {
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': FileType.XLS,
 }
 
+export const assembleGoogleDriveFile = (file: drive_v3.Schema$File): FileView => {
+  return {
+    id: file.id,
+    originalName: file.name,
+    size: null,
+    type: googleDriveFileTypeMapper[file.fileExtension],
+    mimeType: file.mimeType,
+    createdBy: null,
+    filename: null,
+    url: file.thumbnailLink,
+  }
+}
+
+const googleDriveFileTypeMapper: Record<string, FileType> = {
+  'jpeg': FileType.JPG,
+  'jpg': FileType.JPG,
+  'png': FileType.PNG,
+  'pdf': FileType.PDF,
+  'xlsx': FileType.XLS,
+}

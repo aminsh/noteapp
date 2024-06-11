@@ -13,6 +13,7 @@ import { SharedModule } from './shared/shared.module'
 import { EventModule } from './event/event.module'
 import { ClientsModule, Transport } from '@nestjs/microservices'
 import { MESSAGE_SERVICE } from './shared/shared.contacts'
+import { AuthModule } from './auth/auth.module'
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { MESSAGE_SERVICE } from './shared/shared.contacts'
     EventModule,
     SharedModule,
     NoteModule,
-    UserModule
+    UserModule,
+    AuthModule,
   ],
   controllers: [ AppController ],
   providers: [ AppService ],

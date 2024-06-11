@@ -46,6 +46,7 @@ export interface File {
   mimeType: string
   size: number
   type: FileType
+  url: string
 }
 
 export enum NoteAccess {

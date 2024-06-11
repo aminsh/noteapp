@@ -1,8 +1,9 @@
 import { FileSelectorProps, FilesSelector } from './FilesSelector'
 import { useEffect, useState } from 'react'
-import { Modal, Space } from 'antd'
+import { Modal, Space, Tabs } from 'antd'
 import { translate } from '../../utils'
 import { FileOutlined } from '@ant-design/icons'
+import { GoogleDriveFilesSelector } from './GoogleDriveFilesSelector'
 
 export type FileSelectorDialogProps = FileSelectorProps & {
   open: boolean
@@ -33,11 +34,27 @@ export const FileSelectorDialog = ({value, onChange, onClose, open}: FileSelecto
       open={open}
       onOk={handleOK}
       onCancel={onClose}
+      width={700}
     >
-      <FilesSelector
-        value={files}
-        onChange={setFiles}
+      <Tabs
+        tabPosition='left'
+        items={[
+          {
+            key: 'files',
+            label: translate('file_manager'),
+            children: <FilesSelector
+              value={files}
+              onChange={setFiles}
+            />
+          },
+          {
+            key: 'googleDrive',
+            label: translate('googleDrive'),
+            children: <GoogleDriveFilesSelector/>
+          }
+        ]}
       />
+
     </Modal>
   )
 }

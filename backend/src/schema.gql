@@ -20,6 +20,7 @@ type FileView {
   type: FileType
   mimeType: String!
   size: Float!
+  url: String
 }
 
 enum FileType {
@@ -68,8 +69,14 @@ type TokenResponse {
   token_type: String!
 }
 
+type GoogleDrivePageableResponse {
+  data: [FileView!]!
+  nextPageToken: String
+}
+
 type Query {
   filesFind(request: FileFindRequest!): FilePageableResponse!
+  googleDriveFind(request: GoogleDriveFindRequest!): GoogleDrivePageableResponse!
   NoteFind: [NoteView!]!
   SharedNoteFind: [NoteView!]!
   NoteById(noteId: String!): NoteView!
@@ -87,7 +94,13 @@ input FileFindRequest {
   notEqualIds: [String!]
 }
 
+input GoogleDriveFindRequest {
+  search: String
+  nextPageToken: String
+}
+
 type Mutation {
+  googleDriveExport(input: GoogleDriveExportDto!): FileView!
   NoteCreate(noteCreate: NoteDto!): NoteView!
   NoteUpdate(noteId: String!, noteUpdate: NoteDto!): Void
   NoteRemove(noteId: String!): Void
@@ -95,6 +108,11 @@ type Mutation {
   register(userRegister: RegisterDTO!): IdentityResponse!
   login(userLogin: LoginDTO!): TokenResponse!
   update(userId: String!, updateUser: UpdateUserDTO!): Void
+}
+
+input GoogleDriveExportDto {
+  fileId: String!
+  mimeType: String!
 }
 
 input NoteDto {

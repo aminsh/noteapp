@@ -35,6 +35,9 @@ export class FileView {
 
   @Field()
   size: number
+
+  @Field(() => String, {nullable: true})
+  url: string
 }
 
 @ObjectType()
