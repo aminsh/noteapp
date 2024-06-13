@@ -1,5 +1,5 @@
 import { File } from '../../type/entity'
-import { Button, Col, List, Row } from 'antd'
+import { Button, List } from 'antd'
 import { FileTypeIcon } from './FileTypeIcon'
 import { DeleteOutlined } from '@ant-design/icons'
 import { FormField } from '../../type/form'
