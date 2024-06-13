@@ -22,9 +22,11 @@ const authLink = setContext((_, { headers }) => {
 const errorLink = onError(({ graphQLErrors }) => {
   if (graphQLErrors)
     graphQLErrors.forEach(({ message }) => {
-      if (message === 'Unauthorized')
+      if (message === 'Unauthorized') {
+        memory.remove(AUTHENTICATION_TOKEN)
         /* eslint-disable */
-        history.pushState({}, '', '/login')
+        location.reload()
+      }
     })
 })
 

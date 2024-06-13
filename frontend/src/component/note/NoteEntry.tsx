@@ -1,74 +1,101 @@
-import { useNavigate, useParams } from 'react-router-dom'
-import { useLazyQuery, useMutation } from '@apollo/client'
 import { Note } from '../../type/entity'
-import { CREATE_NOTE, GET_NOTE_BY_ID, REMOVE_NOTE } from '../../gql/note'
-import { Badge, Card, Form, Input, Spin } from 'antd'
+import { Form, Input, Modal, Space } from 'antd'
 import { useEffect } from 'react'
-import { useNoteList } from '../../hook/note-list.hook'
-import { confirm, notify, translate } from '../../utils'
+import { notify, translate } from '../../utils'
 import { NoteEditorControl } from './NoteEditorControl'
 import { NoteAttachments } from './NoteAttachments'
-import { useNoteSync } from '../../hook/note-sync.hook'
+import { useMutation } from '@apollo/client'
+import { NoteCreateMutationDocument, NoteUpdateMutationDocument } from '../../gql/note'
+import { SaveOutlined } from '@ant-design/icons'
 
 const {useForm} = Form
 
-export const NoteEntry = () => {
-  const [form] = useForm<Note | undefined>()
-  const {id} = useParams<{ id: string }>()
-  const {syncing, update, current, setCurrent} = useNoteSync()
+export type NoteEntryProps = {
+  entity?: Note
+  open?: boolean
+  onClose?: () => void
+  onComplete?: () => void
+}
 
-  const handleSync = (data: any) => {
-    const dto = {
-      ...data,
-      attachments: data?.attachments.map((e: any) => e.id),
+export const NoteEntry = ({open, entity, onClose, onComplete}: NoteEntryProps) => {
+  const [form] = useForm<Note>()
+  const [create, {loading: creating}] = useMutation<void, { input: any }>(NoteCreateMutationDocument)
+  const [update, {loading: updating}] = useMutation<void, { id: string, input: any }>(NoteUpdateMutationDocument)
+
+  useEffect(() => {
+    form.setFieldsValue(entity ?? {
+      id: '',
+      title: '',
+      content: '',
+      attachments: [],
+      shared: [],
+    })
+  }, [entity])
+
+  const handleSave = async (data: Note) => {
+    const input = {
+      title: data.title,
+      content: data.content,
+      attachments: data.attachments?.map(at => at.id),
     }
-    return update(id as string, dto)
+
+    entity
+      ? await update({
+        variables: {
+          id: entity.id,
+          input
+        },
+      })
+      : await create({
+        variables: {input},
+      })
+
+    notify.success(
+      translate('note'),
+      translate('save_success_message'),
+    )
+
+    onComplete!()
+    onClose!()
   }
 
-  useEffect(() => {
-    if (!id)
-      return
-    setCurrent(id)
-  }, [id])
-
-  useEffect(() => {
-    form.setFieldsValue(current)
-  }, [current])
-
   return (
-    <Form
-      onFinish={handleSync}
-      onFieldsChange={form.submit}
-      form={form}
-      layout='vertical'
+    <Modal
+      title={translate(entity ? 'edit' : 'new', 'note')}
+      open={open}
+      onOk={form.submit}
+      okText={<Space>
+        <SaveOutlined/>
+        {translate('save')}
+      </Space>}
+      onCancel={onClose}
+      confirmLoading={creating || updating}
+      width={700}
     >
-      <Card>
-        <Badge
-          color='green'
-          text={syncing
-            ? translate('syncing', '...')
-            : translate('synced')}
-        />
-
+      <Form
+        onFinish={handleSave}
+        form={form}
+        layout="vertical"
+      >
         <Form.Item
           label={translate('title')}
-          name='title'
+          name="title"
         >
           <Input/>
         </Form.Item>
 
         <Form.Item
-          name='content'
+          name="content"
         >
           <NoteEditorControl/>
         </Form.Item>
 
         <Form.Item
-          name='attachments'
+          name="attachments"
         >
           <NoteAttachments/>
         </Form.Item>
-      </Card>
-    </Form>
+      </Form>
+    </Modal>
   )
 }

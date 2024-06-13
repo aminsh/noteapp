@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { PageableRequest } from '../type'
 import { IsOptional, IsString } from 'class-validator'
-import { FilterQuery, Types } from 'mongoose'
+import { FilterQuery } from 'mongoose'
 import { File } from '../schema/file'
 
 @InputType()

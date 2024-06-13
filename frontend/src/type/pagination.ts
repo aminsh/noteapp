@@ -14,6 +14,12 @@ export type PageableResponse<TKey extends string, TData> = {
   }
 }
 
+export type Page = {
+  pageSize: number
+  page: number
+  total: number
+}
+
 export type GoogleDrivePageableResponse = {
   googleDriveFind: {
     data: File[]

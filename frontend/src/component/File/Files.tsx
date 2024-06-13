@@ -1,7 +1,7 @@
 import { File } from '../../type/entity'
-import { Button, Row, Spin, Table, TableProps, Tooltip } from 'antd'
+import { Button, Spin, Table, TableProps, Tooltip } from 'antd'
 import { translate } from '../../utils'
-import { useLazyQuery, useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { GET_FILES } from '../../gql/file'
 import React, { useEffect, useState } from 'react'
 import {
@@ -9,11 +9,10 @@ import {
   FileExcelOutlined,
   FileImageOutlined,
   FileJpgOutlined,
-  FilePdfOutlined
+  FilePdfOutlined,
 } from '@ant-design/icons'
 import { PageableRequest, PageableResponse } from '../../type/pagination'
 import { DEFAULT_PAGE_SIZE } from '../../App.constant'
-import { FilesSelector } from './FilesSelector'
 import { FileSelectorDialog } from './FileSelectorDialog'
 
 export const Files = () => {
@@ -28,8 +27,8 @@ export const Files = () => {
         request: {
           take: pageSize,
           skip: (page - 1) * pageSize,
-        }
-      }
+        },
+      },
     })
     setData(data?.filesFind.data ?? [])
     setTotal(data?.filesFind.count)
@@ -38,8 +37,6 @@ export const Files = () => {
   useEffect(() => {
     fetch(1, DEFAULT_PAGE_SIZE)
   }, [])
-
-  const [files, setFiles] = useState<string[]>([/*'65ea1b138388f4768fc36d25', '660b0dc2bfb9328747468eea'*/])
 
   const columns: TableProps<File>['columns'] = [
     {
@@ -74,15 +71,6 @@ export const Files = () => {
         }}
       />
     </Spin>
-
-    <Button
-      icon={<FileAddFilled/>}
-      onClick={() => setOpenFileManager(true)}
-    />
-    <FileSelectorDialog
-      open={openFileManager}
-      onClose={() => setOpenFileManager(false)}
-    />
   </>)
 }
 

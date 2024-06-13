@@ -20,7 +20,6 @@ type FileView {
   type: FileType
   mimeType: String!
   size: Float!
-  url: String
 }
 
 enum FileType {
@@ -63,23 +62,20 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type NotePageableResponse {
+  count: Int
+  data: [NoteView!]!
+}
+
 type TokenResponse {
   access_token: String!
   expires_in: String!
   token_type: String!
 }
 
-type GoogleDrivePageableResponse {
-  data: [FileView!]!
-  nextPageToken: String
-}
-
 type Query {
   filesFind(request: FileFindRequest!): FilePageableResponse!
-  googleDriveFind(request: GoogleDriveFindRequest!): GoogleDrivePageableResponse!
-  NoteFind: [NoteView!]!
-  SharedNoteFind: [NoteView!]!
-  NoteById(noteId: String!): NoteView!
+  notesFind(request: NoteFindRequest!): NotePageableResponse!
   UsersFindById(ids: [String!]!): [UserView!]!
   UsersSearch(term: String!, take: Int!): [UserView!]!
   getUsers: [UserView!]!
@@ -94,25 +90,21 @@ input FileFindRequest {
   notEqualIds: [String!]
 }
 
-input GoogleDriveFindRequest {
+input NoteFindRequest {
+  take: Int!
+  skip: Int!
   search: String
-  nextPageToken: String
+  id: String
 }
 
 type Mutation {
-  googleDriveExport(input: GoogleDriveExportDto!): FileView!
-  NoteCreate(noteCreate: NoteDto!): NoteView!
-  NoteUpdate(noteId: String!, noteUpdate: NoteDto!): Void
-  NoteRemove(noteId: String!): Void
-  NoteShare(noteId: String!, noteShare: [NoteShareDTO!]!): Void
+  noteCreate(input: NoteDto!): NoteView!
+  noteUpdate(id: String!, input: NoteDto!): Void
+  noteRemove(noteId: String!): Void
+  noteShare(id: String!, input: [NoteShareDTO!]!): Void
   register(userRegister: RegisterDTO!): IdentityResponse!
   login(userLogin: LoginDTO!): TokenResponse!
   update(userId: String!, updateUser: UpdateUserDTO!): Void
-}
-
-input GoogleDriveExportDto {
-  fileId: String!
-  mimeType: String!
 }
 
 input NoteDto {

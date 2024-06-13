@@ -1,17 +1,18 @@
-import { FileSelectorProps, FilesSelector } from './FilesSelector'
+import { FilesSelector } from './FilesSelector'
 import { useEffect, useState } from 'react'
-import { Modal, Space, Tabs } from 'antd'
+import { Modal, Space } from 'antd'
 import { translate } from '../../utils'
 import { FileOutlined } from '@ant-design/icons'
-import { GoogleDriveFilesSelector } from './GoogleDriveFilesSelector'
+import { FormField } from '../../type/form'
+import { File } from '../../type/entity'
 
-export type FileSelectorDialogProps = FileSelectorProps & {
+export type FileSelectorDialogProps = FormField<File[]> & {
   open: boolean
   onClose: () => void
 }
 
 export const FileSelectorDialog = ({value, onChange, onClose, open}: FileSelectorDialogProps) => {
-  const [files, setFiles] = useState<string[]>([])
+  const [files, setFiles] = useState<File[]>([])
 
   useEffect(() => {
     setFiles(value ?? [])
@@ -34,27 +35,11 @@ export const FileSelectorDialog = ({value, onChange, onClose, open}: FileSelecto
       open={open}
       onOk={handleOK}
       onCancel={onClose}
-      width={700}
     >
-      <Tabs
-        tabPosition='left'
-        items={[
-          {
-            key: 'files',
-            label: translate('file_manager'),
-            children: <FilesSelector
-              value={files}
-              onChange={setFiles}
-            />
-          },
-          {
-            key: 'googleDrive',
-            label: translate('googleDrive'),
-            children: <GoogleDriveFilesSelector/>
-          }
-        ]}
+      <FilesSelector
+        value={files}
+        onChange={setFiles}
       />
-
     </Modal>
   )
 }

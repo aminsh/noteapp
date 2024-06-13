@@ -21,11 +21,12 @@ export class NoteService {
     private fileRepository: FileRepository,
     private requestContext: NpRequestContext,
     @Inject(MESSAGE_SERVICE) private message: MessageService,
-  ) {}
+  ) {
+  }
 
   async create(dto: NoteDto): Promise<Note> {
     const entity = new Note()
-    entity.owner = await this.userRepository.findOne({ _id: this.requestContext.authenticatedUser.id })
+    entity.owner = await this.userRepository.findOne({_id: this.requestContext.authenticatedUser.id})
     entity.title = dto.title
     entity.content = dto.content
 
@@ -35,7 +36,7 @@ export class NoteService {
   }
 
   async update(_id: string, dto: NoteDto): Promise<void> {
-    const entity = await this.noteRepository.findOne({ _id })
+    const entity = await this.noteRepository.findOne({_id})
 
     if (!entity)
       throw new NotFoundException()
@@ -58,7 +59,7 @@ export class NoteService {
   }
 
   async remove(_id: string): Promise<void> {
-    const entity = await this.noteRepository.findOne({ _id })
+    const entity = await this.noteRepository.findOne({_id})
 
     if (!entity)
       throw new NotFoundException()
@@ -67,7 +68,7 @@ export class NoteService {
   }
 
   async share(_id: string, dto: NoteShareDTO[]): Promise<void> {
-    const entity = await this.noteRepository.findOne({ _id })
+    const entity = await this.noteRepository.findOne({_id})
 
     if (!entity)
       throw new NotFoundException()
@@ -77,13 +78,13 @@ export class NoteService {
 
     const users = await this.userRepository.find({
       _id: {
-        $in: dto.map(e => e.userId)
-      }
+        $in: dto.map(e => e.userId),
+      },
     })
 
     entity.shared = dto.map<NoteShared>(e => ({
       user: users.find(u => u._id.toString() === e.userId),
-      access: e.access
+      access: e.access,
     }))
 
     if (Enumerable.from(entity.shared).any(e => !e.user))
@@ -92,7 +93,7 @@ export class NoteService {
     await this.noteRepository.update(entity)
   }
 
-  private async resolveFiles(filesDto: string[], entity: Note): Promise<void> {
+  private async resolveFiles(filesDto: string[], entity: Note): Promise<File[]> {
     if (!filesDto?.length) {
       entity.attachments = []
       return
@@ -100,8 +101,8 @@ export class NoteService {
 
     const files: File[] = await this.fileRepository.find({
       _id: {
-        $in: filesDto
-      }
+        $in: filesDto,
+      },
     })
 
     if (files.length !== filesDto.length)
@@ -111,7 +112,7 @@ export class NoteService {
   }
 
   private isUserAllowedToEdit(entity: Note): void {
-    const { id: currentUserId } = this.requestContext.authenticatedUser
+    const {id: currentUserId} = this.requestContext.authenticatedUser
 
     if (entity.owner._id.toString() === currentUserId)
       return
