@@ -47,7 +47,7 @@ export const handleNoteFindRequest = (request: NoteFindRequest, userId: string):
           },
         },
         {
-          title: {
+          content: {
             $regex: request.search,
             $options: 'i',
           },

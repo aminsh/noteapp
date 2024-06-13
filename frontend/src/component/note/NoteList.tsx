@@ -1,5 +1,5 @@
 import { Note } from '../../type/entity'
-import { Button, message, Pagination, Row, Space, Spin } from 'antd'
+import { Button, Input, message, Pagination, Row, Space, Spin } from 'antd'
 import { confirm, notify, translate } from '../../utils'
 import React, { useEffect, useState } from 'react'
 import { useLazyQuery, useMutation } from '@apollo/client'
@@ -10,7 +10,7 @@ import { NotePreviewDialog } from './NotePreview'
 import { Page, PageableRequest, PageableResponse } from '../../type/pagination'
 import { DEFAULT_PAGE_SIZE } from '../../App.constant'
 import { NoteEntry } from './NoteEntry'
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons'
 
 export const NoteList = () => {
   const [find, {loading}] = useLazyQuery<PageableResponse<'notesFind', Note>, PageableRequest<{
@@ -76,6 +76,16 @@ export const NoteList = () => {
 
   return (<>
     <Spin spinning={loading}>
+      <Row className="d-flex justify-content-center">
+        <Input
+          style={{width: '30%'}}
+          size="large"
+          onChange={e => setSearch(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && fetch(page)}
+          prefix={<SearchOutlined/>}
+        />
+      </Row>
+
       <Row>
         <Button
           type="primary"
