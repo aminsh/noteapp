@@ -6,9 +6,6 @@ import { File } from '../../type/entity'
 import { Button, Input, List, Space, Spin } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 import { FileItem } from './FilesSelector'
-import { translate } from '../../utils'
-import { Token } from '../../type/auth'
-import { EXECUTE_LOGIN } from '../../gql/user'
 
 const END_OF_LIST = 'end-of-list'
 
