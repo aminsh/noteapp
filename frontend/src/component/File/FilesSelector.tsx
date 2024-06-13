@@ -170,7 +170,7 @@ export const FilesSelector = ({value, onChange}: FormField<File[]>) => {
 
 
 
-const FileItem = ({file, onCheckedChange, checked}: {
+export const FileItem = ({file, onCheckedChange, checked}: {
   file: File,
   onCheckedChange: (file: File, checked: boolean) => void,
   checked: boolean

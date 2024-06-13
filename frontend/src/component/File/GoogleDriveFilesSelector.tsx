@@ -76,20 +76,9 @@ export const GoogleDriveFilesSelector = () => {
           dataSource={files}
           renderItem={(item) =>
             <FileItem
-              fromGoogleDrive
               file={item}
               checked={true}
               onCheckedChange={() => {
-              }}
-              exportToServer={()=> {
-                return excuteExport({
-                  variables: {
-                    input: {
-                      fileId: item.id,
-                      mimeType: item.mimeType,
-                    }
-                  }
-                })
               }}
             />
           }
