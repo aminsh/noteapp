@@ -9,18 +9,14 @@ import { SearchOutlined, UploadOutlined } from '@ant-design/icons'
 import { translate } from '../../utils'
 import { useFileUploader } from '../../hook/file-uploader.hook'
 import { FileTypeIcon } from './FileTypeIcon'
-
-export type FileSelectorProps = {
-  value?: string[]
-  onChange?: (value: string[]) => void
-}
+import { FormField } from '../../type/form'
 
 export type PageConfiguration = {
   page: number
   pageSize: number
 }
 
-export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
+export const FilesSelector = ({value, onChange}: FormField<File[]>) => {
   const [query, {loading}] = useLazyQuery<PageableResponse<'filesFind', File>, PageableRequest<{
     search?: string,
     ids?: string[],
@@ -44,7 +40,7 @@ export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
         request: {
           take: pageSize,
           skip: (page - 1) * pageSize,
-          notEqualIds: value ?? [],
+          notEqualIds: value?.map(f => f.id) ?? [],
           search,
         }
       }
@@ -62,7 +58,7 @@ export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
         request: {
           take: 100,
           skip: 0,
-          ids: value ?? [],
+          ids: value.map(f => f.id) ?? [],
         }
       }
     })
@@ -83,7 +79,7 @@ export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
       ? [...selectedFiles, file]
       : selectedFiles.filter(f => f.id !== file.id)
 
-    onChange!(selectedItems.map(it => it.id))
+    onChange!(selectedItems)
   }
 
   const handleUpload = async (file: UploadFile) => {
@@ -105,7 +101,7 @@ export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
     >
 
       <Upload
-        beforeUpload={async (file: UploadFile) => {
+        beforeUpload={async _ => {
           debugger
           return false
         }}
