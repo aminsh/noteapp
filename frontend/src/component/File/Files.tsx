@@ -38,8 +38,6 @@ export const Files = () => {
     fetch(1, DEFAULT_PAGE_SIZE)
   }, [])
 
-  const [files, setFiles] = useState<string[]>([/*'65ea1b138388f4768fc36d25', '660b0dc2bfb9328747468eea'*/])
-
   const columns: TableProps<File>['columns'] = [
     {
       title: translate('mime_type'),
@@ -73,15 +71,6 @@ export const Files = () => {
         }}
       />
     </Spin>
-
-    <Button
-      icon={<FileAddFilled/>}
-      onClick={() => setOpenFileManager(true)}
-    />
-    <FileSelectorDialog
-      open={openFileManager}
-      onClose={() => setOpenFileManager(false)}
-    />
   </>)
 }
 
