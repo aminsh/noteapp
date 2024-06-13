@@ -101,7 +101,8 @@ export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
   return (
     <Space
       direction='vertical'
-      className='w-100'>
+      className='w-100'
+    >
 
       <Upload
         beforeUpload={async (file: UploadFile) => {
@@ -148,14 +149,14 @@ export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
       }
       <Spin spinning={loading}>
         <List<File>
-          itemLayout={'horizontal'}
+          itemLayout='horizontal'
           size='small'
           bordered
           dataSource={files}
           renderItem={(item) =>
             <FileItem
               file={item}
-              checked={true}
+              checked
               onCheckedChange={checkedChangeHandler}
             />
           }
