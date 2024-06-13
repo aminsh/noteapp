@@ -11,14 +11,14 @@ export class NoteDto {
   @IsString()
   content: string
 
-  @Field(() => [ String ], { nullable: true })
-  @IsString({ each: true })
+  @Field(() => [String], {nullable: true})
+  @IsString({each: true})
   @IsArray()
   @IsOptional()
   attachments?: string[]
 
-  @Field(() => [ String ], { nullable: true })
-  @IsString({ each: true })
+  @Field(() => [String], {nullable: true})
+  @IsString({each: true})
   @IsArray()
   @IsOptional()
   shared?: string[]

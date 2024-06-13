@@ -1,14 +1,14 @@
 import { Outlet } from 'react-router-dom'
 import { useAuth } from '../../hook/auth.hook'
 import { useEffect, useState } from 'react'
-import { Layout } from 'antd'
-import { MainMenu } from './MainMenu'
+import { Layout, Menu } from 'antd'
 import { Socket } from 'socket.io-client'
 import { configure } from '../../config/socket-client'
 import { SocketContext } from '../../socket'
 import style from './ProtectedLayout.module.scss'
+import { menuItems } from '../../config/menuItems'
 
-const {Content, Header} = Layout
+const {Content, Sider} = Layout
 
 export const ProtectedLayout = () => {
   const auth = useAuth()
@@ -31,9 +31,14 @@ export const ProtectedLayout = () => {
   return (
     <SocketContext.Provider value={{socket}}>
       <Layout className='bg-white'>
-        <Header style={{background: 'transparent'}}>
-          <MainMenu/>
-        </Header>
+        <Sider style={{background: 'transparent'}}>
+          <Menu
+            style={{ height: '100vh' }}
+             mode='inline'
+             inlineCollapsed={ false }
+             items={menuItems}
+          />
+        </Sider>
         <Layout className={style.mainLayout}>
           <Content>
             <Outlet/>

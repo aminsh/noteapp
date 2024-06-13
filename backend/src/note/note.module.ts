@@ -12,7 +12,7 @@ import { MESSAGE_SERVICE } from '../shared/shared.contacts'
 @Module({
   imports: [
     MongooseModule.forFeature([
-      {name: Note.name, schema: NoteSchema}
+      {name: Note.name, schema: NoteSchema},
     ]),
     ClientsModule.register([
       {name: MESSAGE_SERVICE, transport: Transport.TCP},

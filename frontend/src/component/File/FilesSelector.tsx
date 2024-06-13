@@ -1,35 +1,22 @@
-import { File, FileType } from '../../type/entity'
+import { File } from '../../type/entity'
 import { useLazyQuery } from '@apollo/client'
 import { PageableRequest, PageableResponse } from '../../type/pagination'
 import { GET_FILES } from '../../gql/file'
 import React, { useEffect, useState } from 'react'
 import { DEFAULT_PAGE_SIZE } from '../../App.constant'
-import { Button, Checkbox, Image, Input, List, Pagination, Space, Spin, Upload, UploadFile } from 'antd'
-import {
-  FileExcelOutlined,
-  FileImageOutlined,
-  FileJpgOutlined,
-  FilePdfOutlined,
-  SearchOutlined,
-  UploadOutlined
-} from '@ant-design/icons'
-import { resolvePathFile, translate } from '../../utils'
+import { Button, Checkbox, Input, List, Pagination, Space, Spin, Upload, UploadFile } from 'antd'
+import { SearchOutlined, UploadOutlined } from '@ant-design/icons'
+import { translate } from '../../utils'
 import { useFileUploader } from '../../hook/file-uploader.hook'
-import SvgPdf from '../../asset/pdf.svg'
-import SvgXls from '../../asset/xls.svg'
-import { FileIcon } from './FileIcon'
-
-export type FileSelectorProps = {
-  value?: string[]
-  onChange?: (value: string[]) => void
-}
+import { FileTypeIcon } from './FileTypeIcon'
+import { FormField } from '../../type/form'
 
 export type PageConfiguration = {
   page: number
   pageSize: number
 }
 
-export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
+export const FilesSelector = ({value, onChange}: FormField<File[]>) => {
   const [query, {loading}] = useLazyQuery<PageableResponse<'filesFind', File>, PageableRequest<{
     search?: string,
     ids?: string[],
@@ -53,7 +40,7 @@ export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
         request: {
           take: pageSize,
           skip: (page - 1) * pageSize,
-          notEqualIds: value ?? [],
+          notEqualIds: value?.map(f => f.id) ?? [],
           search,
         }
       }
@@ -71,7 +58,7 @@ export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
         request: {
           take: 100,
           skip: 0,
-          ids: value ?? [],
+          ids: value.map(f => f.id) ?? [],
         }
       }
     })
@@ -92,7 +79,7 @@ export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
       ? [...selectedFiles, file]
       : selectedFiles.filter(f => f.id !== file.id)
 
-    onChange!(selectedItems.map(it => it.id))
+    onChange!(selectedItems)
   }
 
   const handleUpload = async (file: UploadFile) => {
@@ -110,10 +97,11 @@ export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
   return (
     <Space
       direction='vertical'
-      className='w-100'>
+      className='w-100'
+    >
 
       <Upload
-        beforeUpload={async (file: UploadFile) => {
+        beforeUpload={async _ => {
           debugger
           return false
         }}
@@ -157,14 +145,14 @@ export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
       }
       <Spin spinning={loading}>
         <List<File>
-          itemLayout={'horizontal'}
+          itemLayout='horizontal'
           size='small'
           bordered
           dataSource={files}
           renderItem={(item) =>
             <FileItem
               file={item}
-              checked={true}
+              checked
               onCheckedChange={checkedChangeHandler}
             />
           }
@@ -180,27 +168,7 @@ export const FilesSelector = ({value, onChange}: FileSelectorProps) => {
   )
 }
 
-const fileMimeMapper: Record<FileType, React.ReactNode> = {
-  [FileType.JPG]: <FileJpgOutlined style={{fontSize: 30}}/>,
-  [FileType.PNG]: <FileImageOutlined style={{fontSize: 30}}/>,
-  [FileType.PDF]: <FileIcon size={30} src={SvgPdf} alt='pdf'/>,
-  [FileType.XLS]: <FileIcon size={30} src={SvgXls} alt='xls'/>,
-  [FileType.DOC]: <></>,
-  [FileType.TXT]: <></>,
-}
 
-const FileTypeIcon = ({file}: { file: File }) => {
-  return (<>
-    {
-      [FileType.JPG, FileType.PNG].includes(file.type)
-        ? <Image
-          width={30} height={30}
-          src={resolvePathFile(file.filename)}
-        />
-        : fileMimeMapper[file.type]
-    }
-  </>)
-}
 
 const FileItem = ({file, onCheckedChange, checked}: {
   file: File,
@@ -213,7 +181,10 @@ const FileItem = ({file, onCheckedChange, checked}: {
         checked={!checked}
         onChange={() => onCheckedChange(file, checked)}
       />
-      <FileTypeIcon file={file}/>
+      <FileTypeIcon
+        file={file}
+        size={30}
+      />
       {file.originalName}
     </Space>
   </List.Item>

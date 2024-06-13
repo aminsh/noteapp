@@ -11,3 +11,9 @@ export type PageableResponse<TKey extends string, TData> = {
     count: number
   }
 }
+
+export type Page = {
+  pageSize: number
+  page: number
+  total: number
+}

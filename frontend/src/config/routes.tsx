@@ -1,10 +1,17 @@
 import { Login } from '../component/user/Login';
 import { Register } from '../component/user/Register';
-import { NoteEntry } from '../component/note/NoteEntry';
-import { Notes } from '../component/note/Notes'
+import { NoteList } from '../component/note/NoteList'
 import { Files } from '../component/File/Files'
+import { NotePublicPreview } from '../component/note/NotePublicPreview'
+import React from 'react'
 
-export const routes = {
+export type RouteConfiguration = {
+  path: string
+  element: React.ReactNode
+  children?: RouteConfiguration[]
+}
+
+export const routes: Record<string, RouteConfiguration[]> = {
   authRoutes: [
     {path: '/login', element: <Login/>},
     {path: '/register', element: <Register/>},
@@ -12,10 +19,14 @@ export const routes = {
 
   privateRoutes: [
     {path: '/', element: <></>},
-    {path: '/notes/me', element: <Notes type="MyNotes"/>},
-    {path: '/notes/shared-with-me', element: <Notes type="SharedNotes"/>},
-    {path: '/notes/new', element: <NoteEntry/>},
-    {path: '/notes/:id/edit', element: <NoteEntry/>},
-    {path: '/files', element: <Files/>}
+    {
+      path: '/notes',
+      element: <NoteList/>,
+    },
+    {path: '/files', element: <Files/>},
+  ],
+
+  publicRoutes: [
+    {path: '/content/:id', element: <NotePublicPreview/>},
   ],
 }

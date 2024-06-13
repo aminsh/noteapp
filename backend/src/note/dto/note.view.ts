@@ -2,16 +2,17 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { UserView } from '../../user/dto/user.view'
 import { FileView } from '../../shared/dto/file-view'
 import { NoteSharedView } from './note-shared.view'
+import { PageableResponse } from '../../shared/type'
 
 @ObjectType()
 export class NoteView {
-  @Field(() => Date, { nullable: true })
+  @Field(() => Date, {nullable: true})
   createdAt: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => Date, {nullable: true})
   updatedAt: Date
 
-  @Field(() => UserView, { nullable: true })
+  @Field(() => UserView, {nullable: true})
   owner: UserView
 
   @Field()
@@ -23,9 +24,15 @@ export class NoteView {
   @Field()
   content: string
 
-  @Field(() => [ FileView ], { nullable: true })
+  @Field(() => [FileView], {nullable: true})
   attachments: FileView[]
 
-  @Field(() => [ NoteSharedView ], { nullable: true })
+  @Field(() => [NoteSharedView], {nullable: true})
   shared: NoteSharedView[]
+}
+
+@ObjectType()
+export class NotePageableResponse extends PageableResponse<NoteView> {
+  @Field(() => [NoteView])
+  data: NoteView[]
 }

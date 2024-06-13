@@ -10,17 +10,11 @@ export const MainMenu = () => {
       icon: '',
       children: [
         {
-          label: <Link to='/notes/me'>
+          label: <Link to='/notes'>
             {translate('my', 'notes')}
           </Link> ,
           key: 'myNotes',
         },
-        {
-          label: <Link to='/notes/shared-with-me'>
-            {translate('shared_with_me')}
-          </Link>,
-          key: 'sharedWithMe',
-        }
       ]
     },
     {
