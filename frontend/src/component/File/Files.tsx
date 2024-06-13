@@ -27,8 +27,8 @@ export const Files = () => {
         request: {
           take: pageSize,
           skip: (page - 1) * pageSize,
-        }
-      }
+        },
+      },
     })
     setData(data?.filesFind.data ?? [])
     setTotal(data?.filesFind.count)
