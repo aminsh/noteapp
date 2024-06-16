@@ -10,6 +10,7 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { File, FileSchema } from './schema/file'
 import { FileResolver } from './resolver/file.resolver'
 import { GoogleDriveService } from './service/google-drive.service'
+import { GoogleDriveResolver } from './resolver/google-drive.resolver'
 
 @Global()
 @Module({
@@ -27,6 +28,7 @@ import { GoogleDriveService } from './service/google-drive.service'
     FileRepository,
     FileResolver,
     GoogleDriveService,
+    GoogleDriveResolver,
   ],
   controllers: [
     FileController

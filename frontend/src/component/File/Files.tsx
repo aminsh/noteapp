@@ -14,6 +14,8 @@ import {
 import { PageableRequest, PageableResponse } from '../../type/pagination'
 import { DEFAULT_PAGE_SIZE } from '../../App.constant'
 import { FileSelectorDialog } from './FileSelectorDialog'
+import { GoogleDriveFilesSelector } from './GoogleDriveFilesSelector'
+import { GoogleDriveSelectorDialog } from './GoogleDriveSelectorDialog'
 
 export const Files = () => {
   const [query, {loading}] = useLazyQuery<PageableResponse<'filesFind', File>, PageableRequest>(GET_FILES)
@@ -71,6 +73,19 @@ export const Files = () => {
         }}
       />
     </Spin>
+
+    <Button
+      onClick={() => setOpenFileManager(true)}
+    >
+      Google Drive
+    </Button>
+
+    <GoogleDriveSelectorDialog
+      open={openFileManager}
+      onClose={() => setOpenFileManager(false)}
+      onComplete={() => {
+      }}
+    />
   </>)
 }
 

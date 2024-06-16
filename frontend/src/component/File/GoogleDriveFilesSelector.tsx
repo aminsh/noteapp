@@ -1,11 +1,12 @@
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { GoogleDrivePageableResponse } from '../../type/pagination'
-import { EXPORT, GET_GOOGLE_DRIVE_FILES } from '../../gql/file'
+import { CloneGoogleDriveFileMutationDocument, GoogleDriveFilesQueryDocument } from '../../gql/file'
 import React, { useEffect, useState } from 'react'
 import { File } from '../../type/entity'
 import { Button, Input, List, Space, Spin } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
-import { FileItem } from './FilesSelector'
+import { FileTypeIcon } from './FileTypeIcon'
+import { translate } from '../../utils'
 
 const END_OF_LIST = 'end-of-list'
 
@@ -15,8 +16,8 @@ export const GoogleDriveFilesSelector = () => {
       search?: string,
       nextPageToken?: string,
     }
-  }>(GET_GOOGLE_DRIVE_FILES)
-  const [ excuteExport, { loading: exporting, error } ] = useMutation<{ file: File }, {input: {fileId: string, mimeType: string}}>(EXPORT)
+  }>(GoogleDriveFilesQueryDocument)
+  const [ clone, { loading:  cloning, error } ] = useMutation<{ file: File }, {id: string}>(CloneGoogleDriveFileMutationDocument)
   const [nextPageToken, setNextPageToken] = useState<string>()
   const [files, setFiles] = useState<File[]>([])
   const [search, setSearch] = useState<string>('')
@@ -71,13 +72,28 @@ export const GoogleDriveFilesSelector = () => {
           size='small'
           bordered
           dataSource={files}
-          renderItem={(item) =>
-            <FileItem
-              file={item}
-              checked={true}
-              onCheckedChange={() => {
-              }}
-            />
+          renderItem={file =>
+            <List.Item
+              actions={[
+                <Button onClick={()=> {
+                  return clone({
+                    variables: {
+                     id: file.id,
+                    }
+                  })
+                }}>
+                  {translate('select')}
+                </Button>
+              ]}
+            >
+              <Space>
+                <FileTypeIcon
+                  file={file}
+                  size={30}
+                />
+                {file.originalName}
+              </Space>
+            </List.Item>
           }
         />
       </Spin>

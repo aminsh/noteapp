@@ -110,7 +110,7 @@ input NoteFindRequest {
 }
 
 type Mutation {
-  googleDriveExport(input: GoogleDriveExportDto!): FileView!
+  googleDriveClone(id: String!): FileView!
   noteCreate(input: NoteDto!): NoteView!
   noteUpdate(id: String!, input: NoteDto!): Void
   noteRemove(noteId: String!): Void
@@ -118,11 +118,6 @@ type Mutation {
   register(userRegister: RegisterDTO!): IdentityResponse!
   login(userLogin: LoginDTO!): TokenResponse!
   update(userId: String!, updateUser: UpdateUserDTO!): Void
-}
-
-input GoogleDriveExportDto {
-  fileId: String!
-  mimeType: String!
 }
 
 input NoteDto {

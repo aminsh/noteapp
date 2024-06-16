@@ -15,7 +15,7 @@ export const GET_FILES = gql`
     }
 `
 
-export const GET_GOOGLE_DRIVE_FILES = gql`
+export const GoogleDriveFilesQueryDocument = gql`
     query GetGoogleDriveFiles($request: GoogleDriveFindRequest!) {
         googleDriveFind(request: $request) {
             data {
@@ -30,11 +30,14 @@ export const GET_GOOGLE_DRIVE_FILES = gql`
     }
 `
 
-export const EXPORT = gql`
-    mutation Export($input: GoogleDriveExportDto!) {
-        googleDriveExport(input: $input) {
+export const CloneGoogleDriveFileMutationDocument = gql`
+    mutation clone($id: String!) {
+        googleDriveClone(id: $id) {
             id
+            filename
             originalName
+            type
+            mimeType
         }
-    }
+    } 
 `

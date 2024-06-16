@@ -21,7 +21,12 @@ export class FileController {
   @UseInterceptors(FileInterceptor('file'))
   @Post('upload')
   async upload(@UploadedFile() file: Express.Multer.File): Promise<FileView> {
-    const entity = await this.fileService.create(file)
+    const entity = await this.fileService.create({
+      fileName: file.filename,
+      originalName: file.originalname,
+      mimeType: file.mimetype,
+      size: file.size,
+    })
     return fileAssembler(entity)
   }
 

@@ -22,25 +22,6 @@ export class GoogleAuthService {
     return new google.auth.OAuth2(clientId, clientSecret, redirectUri)
   }
 
-  async getOAuthClient(auth: Authentication) {
-    const client = this.client
-    client.setCredentials({
-      access_token: auth.token,
-      refresh_token: auth.refreshToken,
-    })
-
-    try {
-      await this.client.getTokenInfo(auth.token)
-    } catch (e) {
-      const token = await this.client.refreshAccessToken()
-      auth.token = token.credentials.access_token
-      auth.refreshToken = token.credentials.refresh_token
-      await this.authenticationRepository.update(auth)
-    }
-
-    return client
-  }
-
   getUrl(userId: string): any {
     const scopes = ['email', 'https://www.googleapis.com/auth/drive']
 

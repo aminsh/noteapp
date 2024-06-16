@@ -4,9 +4,10 @@ import { NpRequestContext } from './np-request-context.service'
 import { AuthenticationRepository } from '../../auth/repository/authentication.repository'
 import { GoogleDriveFindRequest, GoogleDrivePageableResponse } from '../dto/google-drive.view'
 import { GoogleAuthService } from '../../auth/service/google-auth.service'
-import { assembleGoogleDriveFile } from '../dto/file-assembler'
-import { GoogleDriveExportDto } from '../dto/google-drive-export.dto'
+import { assembleGoogleDriveFile, fileAssembler } from '../dto/file-assembler'
 import { FileView } from '../dto/file-view'
+import { writeReadableStream } from '../utils/file.utils'
+import { FileService } from './file.service'
 
 @Injectable({scope: Scope.REQUEST})
 export class GoogleDriveService {
@@ -14,6 +15,7 @@ export class GoogleDriveService {
     private requestContext: NpRequestContext,
     private authenticationRepository: AuthenticationRepository,
     private googleAuthService: GoogleAuthService,
+    private fileService: FileService,
   ) {
   }
 
@@ -21,7 +23,7 @@ export class GoogleDriveService {
     const auth = await this.authenticationRepository.findOne({
       user: {
         _id: this.requestContext.authenticatedUser.id,
-      }
+      },
     })
 
     if (!auth)
@@ -59,9 +61,24 @@ export class GoogleDriveService {
     }
   }
 
-  async export({fileId, mimeType}: GoogleDriveExportDto): Promise<FileView> {
+  async clone(id: string): Promise<FileView> {
     const drive = await this.getDrive()
-    const {data} = await drive.files.get({fileId, alt: 'media'}, {responseType: 'stream'})
-    return null
+    const {data: dataStream} = await drive.files.get({fileId: id, alt: 'media'}, {responseType: 'stream'})
+
+    await writeReadableStream({
+      data: dataStream,
+      fileName: id,
+    })
+
+    const {data} = await drive.files.get({fileId: id, fields: 'name,id,mimeType,size'})
+
+    const createdFile = await this.fileService.create({
+      fileName: data.id,
+      originalName: data.name,
+      mimeType: data.mimeType,
+      size: Number(data.size),
+    })
+
+    return fileAssembler(createdFile)
   }
 }
