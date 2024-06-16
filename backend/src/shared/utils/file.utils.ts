@@ -1,4 +1,4 @@
-import fs from 'fs'
+import * as fs from 'fs'
 import { join } from 'path'
 import * as Stream from 'node:stream'
 

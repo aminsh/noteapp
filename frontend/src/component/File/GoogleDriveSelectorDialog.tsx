@@ -1,4 +1,3 @@
-import { FilesSelector } from './FilesSelector'
 import { useState } from 'react'
 import { Modal, Space } from 'antd'
 import { translate } from '../../utils'
@@ -13,8 +12,6 @@ export type GoogleDriveSelectorDialogProps = {
 }
 
 export const GoogleDriveSelectorDialog = ({onClose, open, onComplete}: GoogleDriveSelectorDialogProps) => {
-  const [files, setFiles] = useState<File[]>([])
-
   const handleOK = () => {
 
   }
@@ -32,7 +29,10 @@ export const GoogleDriveSelectorDialog = ({onClose, open, onComplete}: GoogleDri
       onOk={handleOK}
       onCancel={onClose}
     >
-     <GoogleDriveFilesSelector/>
+      <GoogleDriveFilesSelector onChange={file => {
+        file && onComplete(file)
+        onClose()
+      }}/>
     </Modal>
   )
 }

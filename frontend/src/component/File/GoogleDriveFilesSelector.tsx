@@ -10,17 +10,28 @@ import { translate } from '../../utils'
 
 const END_OF_LIST = 'end-of-list'
 
-export const GoogleDriveFilesSelector = () => {
+export type GoogleDriveFilesSelectorProps = {
+  onChange: (file?: File) => void
+}
+
+export const GoogleDriveFilesSelector = ({onChange}: GoogleDriveFilesSelectorProps) => {
   const [query, {loading}] = useLazyQuery<GoogleDrivePageableResponse, {
     request: {
       search?: string,
       nextPageToken?: string,
     }
   }>(GoogleDriveFilesQueryDocument)
-  const [ clone, { loading:  cloning, error } ] = useMutation<{ file: File }, {id: string}>(CloneGoogleDriveFileMutationDocument)
+  const [clone, {loading: cloning}] = useMutation<{ googleDriveClone: File }, {
+    id: string
+  }>(CloneGoogleDriveFileMutationDocument)
   const [nextPageToken, setNextPageToken] = useState<string>()
   const [files, setFiles] = useState<File[]>([])
   const [search, setSearch] = useState<string>('')
+  const [idBeingExecuted, setIdBeingExecuted] = useState<string | null>()
+
+  useEffect(() => {
+    fetch()
+  }, [])
 
   const fetch = async () => {
     const {data} = await query({
@@ -28,8 +39,8 @@ export const GoogleDriveFilesSelector = () => {
         request: {
           nextPageToken,
           search,
-        }
-      }
+        },
+      },
     })
     setFiles([
       ...files,
@@ -38,17 +49,29 @@ export const GoogleDriveFilesSelector = () => {
     setNextPageToken(data?.googleDriveFind.nextPageToken ?? END_OF_LIST)
   }
 
-  useEffect(() => {
-    fetch()
-  }, [])
+  const handleClone = async (file: File) => {
+    setIdBeingExecuted(file.id)
+
+    try {
+      const {data} = await clone({
+        variables: {
+          id: file.id,
+        },
+      })
+
+      onChange(data?.googleDriveClone)
+    } finally {
+      setIdBeingExecuted(null)
+    }
+  }
 
   return (
     <Space
-      direction='vertical'
-      className='w-100'
+      direction="vertical"
+      className="w-100"
     >
       <Input
-        size='large'
+        size="large"
         onChange={e => setSearch(e.target.value)}
         onKeyUp={e => e.key === 'Enter' && fetch()}
         prefix={<SearchOutlined/>}
@@ -69,21 +92,17 @@ export const GoogleDriveFilesSelector = () => {
             </div>
           }
           itemLayout={'horizontal'}
-          size='small'
+          size="small"
           bordered
           dataSource={files}
           renderItem={file =>
             <List.Item
               actions={[
-                <Button onClick={()=> {
-                  return clone({
-                    variables: {
-                     id: file.id,
-                    }
-                  })
-                }}>
+                <Button
+                  loading={cloning && idBeingExecuted === file.id}
+                  onClick={() => handleClone(file)}>
                   {translate('select')}
-                </Button>
+                </Button>,
               ]}
             >
               <Space>
