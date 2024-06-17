@@ -47,4 +47,6 @@ export const translateDictionary: Record<string, string> = {
   link_copied: 'Link copied',
   file_manager: 'File Manager',
   select: 'Select',
+  load_more: 'Load More',
+  google_drive: 'Google Drive',
 }

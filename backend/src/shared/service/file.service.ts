@@ -3,6 +3,7 @@ import { FileRepository } from '../repository/file.repository'
 import { NpRequestContext } from './np-request-context.service'
 import { File } from '../schema/file'
 import { UserRepository } from '../../user/repository/user.repository'
+import { FileDto } from '../dto/file.dto'
 
 @Injectable({ scope: Scope.REQUEST })
 export class FileService {
@@ -12,15 +13,17 @@ export class FileService {
     private requestContext: NpRequestContext
   ) {}
 
-  async create(file: Express.Multer.File): Promise<File> {
+  async create(file: FileDto): Promise<File> {
     const user = await this.userRepository.findOne({ _id: this.requestContext.authenticatedUser.id })
 
     const entity = new File()
     entity.createdBy = user
-    entity.filename = file.filename
-    entity.originalName = file.originalname
-    entity.mimeType = file.mimetype
+    entity.filename = file.fileName
+    entity.originalName = file.originalName
+    entity.mimeType = file.mimeType
     entity.size = file.size
+    entity.source = file.source
+    entity.reference = file.reference
 
     return this.fileRepository.create(entity)
   }

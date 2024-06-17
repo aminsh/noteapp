@@ -16,6 +16,7 @@ import { MESSAGE_SERVICE } from './shared/shared.contacts'
 import * as mongoose from 'mongoose'
 
 mongoose.set('debug', true)
+import { AuthModule } from './auth/auth.module'
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ mongoose.set('debug', true)
     EventModule,
     SharedModule,
     NoteModule,
-    UserModule
+    UserModule,
+    AuthModule,
   ],
   controllers: [ AppController ],
   providers: [ AppService ],

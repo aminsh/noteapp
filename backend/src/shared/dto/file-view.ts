@@ -1,6 +1,7 @@
 import { UserView } from '../../user/dto/user.view'
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { PageableResponse } from '../type'
+import { FileSource } from '../schema/file'
 
 export enum FileType {
   JPG = 'JPG',
@@ -12,6 +13,7 @@ export enum FileType {
 }
 
 registerEnumType(FileType, {name: 'FileType'})
+registerEnumType(FileSource, {name: 'FileSource'})
 
 @ObjectType()
 export class FileView {
@@ -35,6 +37,12 @@ export class FileView {
 
   @Field()
   size: number
+
+  @Field(() => String, {nullable: true})
+  url: string
+
+  @Field(() => FileSource, {nullable: true})
+  source: FileSource
 }
 
 @ObjectType()
