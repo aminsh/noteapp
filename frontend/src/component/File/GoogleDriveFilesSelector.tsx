@@ -8,8 +8,6 @@ import { SearchOutlined } from '@ant-design/icons'
 import { FileTypeIcon } from './FileTypeIcon'
 import { translate } from '../../utils'
 
-const END_OF_LIST = 'end-of-list'
-
 export type GoogleDriveFilesSelectorProps = {
   onChange: (file?: File) => void
 }
@@ -28,12 +26,16 @@ export const GoogleDriveFilesSelector = ({onChange}: GoogleDriveFilesSelectorPro
   const [files, setFiles] = useState<File[]>([])
   const [search, setSearch] = useState<string>('')
   const [idBeingExecuted, setIdBeingExecuted] = useState<string | null>()
+  const [isEndOfList, setIsEndOfList] = useState<boolean>(false)
 
   useEffect(() => {
     fetch()
   }, [])
 
   const fetch = async () => {
+    if (isEndOfList)
+      return
+
     const {data} = await query({
       variables: {
         request: {
@@ -46,7 +48,10 @@ export const GoogleDriveFilesSelector = ({onChange}: GoogleDriveFilesSelectorPro
       ...files,
       ...data?.googleDriveFind.data ?? [],
     ])
-    setNextPageToken(data?.googleDriveFind.nextPageToken ?? END_OF_LIST)
+    setNextPageToken(data?.googleDriveFind.nextPageToken)
+
+    if (!data?.googleDriveFind.nextPageToken)
+      setIsEndOfList(true)
   }
 
   const handleClone = async (file: File) => {
@@ -72,50 +77,67 @@ export const GoogleDriveFilesSelector = ({onChange}: GoogleDriveFilesSelectorPro
     >
       <Input
         size="large"
-        onChange={e => setSearch(e.target.value)}
+        onChange={e => {
+          setSearch(e.target.value)
+          setIsEndOfList(false)
+          setNextPageToken(undefined)
+          setFiles([])
+        }}
         onKeyUp={e => e.key === 'Enter' && fetch()}
         prefix={<SearchOutlined/>}
       />
-      <Spin spinning={loading}>
-        <List<File>
-          style={{overflow: 'auto', height: 700}}
-          loadMore={
-            <div
-              style={{
-                textAlign: 'center',
-                marginTop: 12,
-                height: 32,
-                lineHeight: '32px',
-              }}
-            >
-              <Button onClick={fetch}>loading more</Button>
-            </div>
-          }
-          itemLayout={'horizontal'}
-          size="small"
-          bordered
-          dataSource={files}
-          renderItem={file =>
-            <List.Item
-              actions={[
-                <Button
-                  loading={cloning && idBeingExecuted === file.id}
-                  onClick={() => handleClone(file)}>
-                  {translate('select')}
-                </Button>,
-              ]}
-            >
-              <Space>
-                <FileTypeIcon
-                  file={file}
-                  size={30}
-                />
-                {file.originalName}
-              </Space>
-            </List.Item>
-          }
-        />
-      </Spin>
+
+      <div
+        style={{maxHeight: 500, overflow: 'auto'}}
+      >
+        <Spin
+          spinning={loading}
+        >
+          <List<File>
+            loadMore={
+              <>
+                {
+                  !isEndOfList && !loading
+                    ? <div
+                      style={{
+                        textAlign: 'center',
+                        marginTop: 12,
+                        height: 32,
+                        lineHeight: '32px',
+                      }}
+                    >
+                      <Button onClick={fetch}>{translate('load_more')}</Button>
+                    </div>
+                    : ''
+                }
+              </>
+            }
+            itemLayout={'horizontal'}
+            size="small"
+            bordered
+            dataSource={files}
+            renderItem={file =>
+              <List.Item
+                actions={[
+                  <Button
+                    loading={cloning && idBeingExecuted === file.id}
+                    onClick={() => handleClone(file)}>
+                    {translate('select')}
+                  </Button>,
+                ]}
+              >
+                <Space>
+                  <FileTypeIcon
+                    file={file}
+                    size={30}
+                  />
+                  {file.originalName}
+                </Space>
+              </List.Item>
+            }
+          />
+        </Spin>
+      </div>
     </Space>
   )
 }

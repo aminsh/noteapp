@@ -21,6 +21,7 @@ type FileView {
   mimeType: String!
   size: Float!
   url: String
+  source: FileSource
 }
 
 enum FileType {
@@ -30,6 +31,10 @@ enum FileType {
   PDF
   DOC
   TXT
+}
+
+enum FileSource {
+  GoogleDive
 }
 
 type FilePageableResponse {

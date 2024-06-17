@@ -8,6 +8,7 @@ import { assembleGoogleDriveFile, fileAssembler } from '../dto/file-assembler'
 import { FileView } from '../dto/file-view'
 import { writeReadableStream } from '../utils/file.utils'
 import { FileService } from './file.service'
+import { FileSource } from '../schema/file'
 
 @Injectable({scope: Scope.REQUEST})
 export class GoogleDriveService {
@@ -77,6 +78,8 @@ export class GoogleDriveService {
       originalName: data.name,
       mimeType: data.mimeType,
       size: Number(data.size),
+      source: FileSource.GoogleDive,
+      reference: id,
     })
 
     return fileAssembler(createdFile)

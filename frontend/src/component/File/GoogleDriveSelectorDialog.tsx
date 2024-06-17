@@ -1,9 +1,10 @@
-import { useState } from 'react'
 import { Modal, Space } from 'antd'
 import { translate } from '../../utils'
 import { FileOutlined } from '@ant-design/icons'
 import { File } from '../../type/entity'
 import { GoogleDriveFilesSelector } from './GoogleDriveFilesSelector'
+import googleDriveIcon from '../../asset/google_drive.png'
+import { FileIcon } from './FileIcon'
 
 export type GoogleDriveSelectorDialogProps = {
   open: boolean
@@ -20,14 +21,16 @@ export const GoogleDriveSelectorDialog = ({onClose, open, onComplete}: GoogleDri
     <Modal
       title={
         <Space>
-          <FileOutlined/>
-          {translate('file_manager')}
+          <FileIcon src={googleDriveIcon} size={32} alt='googleDrive' />
+          {translate('google_drive')}
         </Space>
       }
-      closable={false}
+      closable
       open={open}
       onOk={handleOK}
       onCancel={onClose}
+      width={700}
+      footer={null}
     >
       <GoogleDriveFilesSelector onChange={file => {
         file && onComplete(file)

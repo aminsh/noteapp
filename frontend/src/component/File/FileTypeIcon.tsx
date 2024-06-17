@@ -4,6 +4,8 @@ import { FileImageOutlined, FileJpgOutlined } from '@ant-design/icons'
 import { FileIcon } from './FileIcon'
 import SvgPdf from '../../asset/pdf.svg'
 import SvgXls from '../../asset/xls.svg'
+import SvgDoc from '../../asset/docx.svg'
+import SvgTxt from '../../asset/txt.svg'
 import { Image } from 'antd'
 import { resolvePathFile } from '../../utils'
 
@@ -13,8 +15,8 @@ const fileTypeMapperFactory = (size: number): Record<FileType, React.ReactNode> 
     [FileType.PNG]: <FileImageOutlined style={{fontSize: size}}/>,
     [FileType.PDF]: <FileIcon size={size} src={SvgPdf} alt="pdf"/>,
     [FileType.XLS]: <FileIcon size={size} src={SvgXls} alt="xls"/>,
-    [FileType.DOC]: <></>,
-    [FileType.TXT]: <></>,
+    [FileType.DOC]: <FileIcon size={size} src={SvgDoc} alt="doc"/>,
+    [FileType.TXT]: <FileIcon size={size} src={SvgTxt} alt="txt"/>,
   }
 }
 

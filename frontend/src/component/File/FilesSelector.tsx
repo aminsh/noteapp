@@ -10,6 +10,9 @@ import { translate } from '../../utils'
 import { useFileUploader } from '../../hook/file-uploader.hook'
 import { FileTypeIcon } from './FileTypeIcon'
 import { FormField } from '../../type/form'
+import { GoogleDriveSelectorDialog } from './GoogleDriveSelectorDialog'
+import googleDriveIcon from '../../asset/google_drive.png'
+import { FileIcon } from './FileIcon'
 
 export type PageConfiguration = {
   page: number
@@ -29,6 +32,7 @@ export const FilesSelector = ({value, onChange}: FormField<File[]>) => {
   const [search, setSearch] = useState<string>('')
   const [uploading, setUploading] = useState<boolean>(false)
   const fileUploader = useFileUploader()
+  const [googleDriveOpen, setGoogleDriveOpen] = useState<boolean>(false)
 
   const fetch = async ({page, pageSize}: PageConfiguration) => {
     setPageConfig({
@@ -99,27 +103,34 @@ export const FilesSelector = ({value, onChange}: FormField<File[]>) => {
       direction='vertical'
       className='w-100'
     >
-
-      <Upload
-        beforeUpload={async _ => {
-          debugger
-          return false
-        }}
-        onChange={({file}) => {
-          if (!file.status)
-            return handleUpload(file)
-        }}
-        showUploadList={false}
-      >
-        <Button
-          loading={uploading}
-          icon={<UploadOutlined/>}
-          type='primary'
-          size='large'
+      <Space>
+        <Upload
+          beforeUpload={async _ => {
+            debugger
+            return false
+          }}
+          onChange={({file}) => {
+            if (!file.status)
+              return handleUpload(file)
+          }}
+          showUploadList={false}
         >
-          {translate('upload')}
+          <Button
+            loading={uploading}
+            icon={<UploadOutlined/>}
+            type='primary'
+          >
+            {translate('upload')}
+          </Button>
+        </Upload>
+
+        <Button
+          onClick={() => setGoogleDriveOpen(true)}
+          icon={<FileIcon src={googleDriveIcon} size={16} alt='googleDrive'/>}
+        >
+          {translate('google_drive')}
         </Button>
-      </Upload>
+      </Space>
 
       <Input
         size='large'
@@ -164,10 +175,14 @@ export const FilesSelector = ({value, onChange}: FormField<File[]>) => {
         onChange={(page, pageSize) => fetch({page, pageSize})}
         total={total}
       />
+      <GoogleDriveSelectorDialog
+        open={googleDriveOpen}
+        onClose={() => setGoogleDriveOpen(false)}
+        onComplete={file => checkedChangeHandler(file, true)}
+      />
     </Space>
   )
 }
-
 
 
 export const FileItem = ({file, onCheckedChange, checked}: {

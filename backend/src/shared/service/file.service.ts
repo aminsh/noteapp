@@ -22,6 +22,8 @@ export class FileService {
     entity.originalName = file.originalName
     entity.mimeType = file.mimeType
     entity.size = file.size
+    entity.source = file.source
+    entity.reference = file.reference
 
     return this.fileRepository.create(entity)
   }
