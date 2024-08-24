@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose'
 import { Note } from '../schema/note'
 import { Model } from 'mongoose'
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql'
 import { NotePageableResponse, NoteView } from '../dto/note.view'
 import { NoteService } from '../service/note.service'
 import { NoteDto } from '../dto/note.dto'
@@ -12,6 +12,9 @@ import { noteAssembler } from '../dto/note-assembler'
 import { NpRequestContext } from '../../shared/service/np-request-context.service'
 import { NoteShareDTO } from '../dto/note-shared.dto'
 import { handleNoteFindRequest, NoteFindRequest } from '../dto/note-find.request'
+import { PubSub } from 'graphql-subscriptions'
+
+const pubSub = new PubSub()
 
 @UseGuards(JwtGqlAuthenticationGuard)
 @Resolver(() => NoteView)
@@ -47,8 +50,13 @@ export class NoteResolver {
 
   @Mutation(() => NoteView, {name: 'noteCreate'})
   async create(@Args('input') dto: NoteDto): Promise<NoteView> {
-    const result = await this.noteService.create(dto)
-    return noteAssembler(result)
+    const newNote = await this.noteService.create(dto)
+
+    const view = noteAssembler(newNote)
+
+    await pubSub.publish('noteCreated', {noteCreated: view})
+
+    return view
   }
 
   @Mutation(() => VoidResolver, {
@@ -79,5 +87,15 @@ export class NoteResolver {
     @Args({name: 'input', type: () => [NoteShareDTO]}) dto: NoteShareDTO[],
   ): Promise<void> {
     return this.noteService.share(id, dto)
+  }
+}
+
+@Resolver(() => NoteView)
+export class NoteSubscriptionResolver {
+  @Subscription(() => NoteView, {
+    name: 'noteCreated'
+  })
+  noteCreated() {
+    return pubSub.asyncIterator('noteCreated')
   }
 }

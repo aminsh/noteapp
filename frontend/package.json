@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
-    "@apollo/client": "^3.7.12",
+    "@apollo/client": "^3.11.4",
     "@ckeditor/ckeditor5-build-classic": "^39.0.2",
     "@ckeditor/ckeditor5-react": "^6.1.0",
     "@reduxjs/toolkit": "^1.9.5",
@@ -17,7 +17,8 @@
     "@types/react-dom": "^18.0.11",
     "antd": "^5.4.4",
     "bootstrap": "^5.2.3",
-    "graphql": "^16.6.0",
+    "graphql": "^16.9.0",
+    "graphql-ws": "^5.16.0",
     "moment": "^2.30.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -27,7 +28,7 @@
     "react-scripts": "5.0.1",
     "sanitize-html": "^2.13.0",
     "sass": "^1.62.0",
-    "socket.io-client": "^4.7.5",
+    "subscriptions-transport-ws": "^0.11.0",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },

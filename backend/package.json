@@ -43,7 +43,9 @@
     "googleapis": "^140.0.0",
     "graphql": "^16.6.0",
     "graphql-scalars": "^1.21.3",
+    "graphql-subscriptions": "^2.0.0",
     "graphql-type-json": "^0.3.2",
+    "graphql-ws": "^5.16.0",
     "linq": "3.2.3",
     "md5": "^2.3.0",
     "mongoose": "^7.0.3",
@@ -51,7 +53,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.7.5",
+    "subscriptions-transport-ws": "^0.11.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",

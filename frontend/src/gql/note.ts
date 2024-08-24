@@ -68,6 +68,15 @@ export const NoteQueryShareUsersDocument = gql`
     }
 `
 
+export const NoteSubscription = gql`
+    subscription OnNoteCreated {
+        noteCreated {
+            id
+            title
+        }
+    }
+`
+
 
 
 

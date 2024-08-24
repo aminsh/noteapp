@@ -8,20 +8,21 @@ import SvgDoc from '../../asset/docx.svg'
 import SvgTxt from '../../asset/txt.svg'
 import { Image } from 'antd'
 import { resolvePathFile } from '../../utils'
+import * as docxPreview from 'docx-preview'
 
-const fileTypeMapperFactory = (size: number): Record<FileType, React.ReactNode> => {
+const fileTypeMapperFactory = (size: number, file?: File): Record<FileType, React.ReactNode> => {
   return {
     [FileType.JPG]: <FileJpgOutlined style={{fontSize: size}}/>,
     [FileType.PNG]: <FileImageOutlined style={{fontSize: size}}/>,
     [FileType.PDF]: <FileIcon size={size} src={SvgPdf} alt="pdf"/>,
     [FileType.XLS]: <FileIcon size={size} src={SvgXls} alt="xls"/>,
-    [FileType.DOC]: <FileIcon size={size} src={SvgDoc} alt="doc"/>,
+    [FileType.DOC]: <DocIcon size={size} file={file}/>,
     [FileType.TXT]: <FileIcon size={size} src={SvgTxt} alt="txt"/>,
   }
 }
 
 export const FileTypeIcon = ({file, size}: { file: File, size: number }) => {
-  const fileTypeMapper = fileTypeMapperFactory(size)
+  const fileTypeMapper = fileTypeMapperFactory(size, file)
 
   return (<>
     {
@@ -33,4 +34,38 @@ export const FileTypeIcon = ({file, size}: { file: File, size: number }) => {
         : fileTypeMapper[file.type]
     }
   </>)
+}
+
+export const DocIcon = ({ file, size }: { file?: File, size: number }) => {
+  const handleClick = () => {
+    if(!file)
+      return
+
+    fetch(resolvePathFile(file.filename))
+      .then(async res => {
+        const blob = await res.blob()
+
+        await docxPreview.renderAsync(
+          blob,
+          // @ts-ignore
+          document.getElementById('docx-container'),
+        )
+      })
+  }
+  return(
+    <>
+      <Image
+        width={35}
+        src={SvgDoc}
+        preview={{
+          destroyOnClose: true,
+          imageRender: () => {
+            handleClick()
+            return <div id='docx-container'></div>
+          },
+          toolbarRender: () => null,
+        }}
+      />
+    </>
+  )
 }

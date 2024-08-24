@@ -20,18 +20,23 @@ import { AuthModule } from './auth/auth.module'
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({isGlobal: true}),
     MongooseModule.forRootAsync({
-      imports: [ ConfigModule ],
-      inject: [ ConfigService ],
-      useFactory: (configService: ConfigService) => ({ uri: configService.get('MONGO_URI') })
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({uri: configService.get('MONGO_URI')})
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       resolvers: {
         Void: VoidResolver
-      }
+      },
+      installSubscriptionHandlers: true,
+      subscriptions: {
+        'graphql-ws': true,
+        'subscriptions-transport-ws': true,
+      },
     }),
     ClientsModule.register([
       {name: MESSAGE_SERVICE, transport: Transport.TCP},
@@ -42,8 +47,8 @@ import { AuthModule } from './auth/auth.module'
     UserModule,
     AuthModule,
   ],
-  controllers: [ AppController ],
-  providers: [ AppService ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {
 }
